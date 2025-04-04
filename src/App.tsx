@@ -1042,48 +1042,34 @@ const App: React.FC = () => {
     // In JSX, we use className instead of class (which is a reserved word in JavaScript)
     // JSX looks like HTML but is actually JavaScript
     <div className="App">
-      {/* Banner section containing the title, tabs, and date */}
+      {/* Banner section containing the title and tabs */}
       <div className="banner">
-        {/* The main title of our application */}
-        <h1 className="banner-title">Kev & Nati Meal Planner</h1>
-        
-        {/* 
-          Navigation Tabs
+        {/* Title and tabs in one container */}
+        <div className="banner-title-container">
+          {/* The main title of our application */}
+          <h1 className="banner-title">K&N Meal Planner</h1>
           
-          In React, we can render lists of elements by using JavaScript's array methods.
-          Here, we're rendering each tab button individually, but for larger lists,
-          we would typically use .map() to iterate over an array.
-        */}
-        <div className="banner-tabs">
-          {/* 
-            Tab Button with Conditional Styling
-            
-            Note the following React patterns:
-            
-            1. Template literals with backticks (`) to combine strings and expressions
-            2. Conditional classes using ternary operators
-            3. Event handling with onClick and arrow functions
-            
-            The className will include 'active' only if this tab is the activeTab
-          */}
-          <button 
-            className={`tab-button ${activeTab === 'mealPlanner' ? 'active' : ''}`}
-            onClick={() => handleTabClick('mealPlanner')}
-          >
-            Meal Planner
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'recipeLibrary' ? 'active' : ''}`}
-            onClick={() => handleTabClick('recipeLibrary')}
-          >
-            Recipe Library
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'shoppingList' ? 'active' : ''}`}
-            onClick={() => handleTabClick('shoppingList')}
-          >
-            Shopping List
-          </button>
+          {/* Navigation Tabs */}
+          <div className="banner-tabs">
+            <button 
+              className={`tab-button ${activeTab === 'mealPlanner' ? 'active' : ''}`}
+              onClick={() => handleTabClick('mealPlanner')}
+            >
+              Meal Planner
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'recipeLibrary' ? 'active' : ''}`}
+              onClick={() => handleTabClick('recipeLibrary')}
+            >
+              Recipe Library
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'shoppingList' ? 'active' : ''}`}
+              onClick={() => handleTabClick('shoppingList')}
+            >
+              Shopping List
+            </button>
+          </div>
         </div>
         
         {/* Display the current date in the banner */}
