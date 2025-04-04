@@ -67,7 +67,7 @@ interface ShoppingList {
  * This is a functional component (as opposed to a class component).
  * Functional components are the modern and recommended way to write React components.
  */
-function App() {
+const App: React.FC = () => {
   //===========================================================================
   // STATE MANAGEMENT
   //===========================================================================
@@ -332,29 +332,26 @@ function App() {
    * In a real app, this would save the data to a database or API.
    */
   const handleSaveMeal = async () => {
-    if (!selectedMeal) return;
+    if (!selectedDate || !selectedMeal) return;
 
     try {
+      await ensureAuthentication();
       const weekRange = getWeekRange(selectedDate);
       const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-      
-      // Get existing meal plan or create new one
+
       const mealPlanRef = doc(db, collections.mealPlans, weekRange);
       const mealPlanDoc = await getDocs(collection(db, collections.mealPlans));
       const existingPlan = mealPlanDoc.docs.find(doc => doc.id === weekRange);
-      
+
       const updatedPlan = {
         ...(existingPlan?.data() || {}),
         [dayOfWeek]: selectedMeal
       };
 
       await setDoc(mealPlanRef, updatedPlan);
-      
-      setSavedMessage('Meal saved successfully!');
-      setTimeout(() => setSavedMessage(''), 3000);
+      setSelectedMeal('');
     } catch (error) {
-      console.error('Error saving meal:', error);
-      // Handle error (e.g., show error message to user)
+      console.error('Error saving meal plan:', error);
     }
   };
 

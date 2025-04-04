@@ -19,13 +19,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth(app);
+export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
-// Firestore Collection References
-const collections = {
+// Export collections
+export const collections = {
   recipes: 'recipes',
   mealPlans: 'mealPlans',
   shoppingLists: 'shoppingLists'
@@ -44,7 +44,7 @@ onAuthStateChanged(auth, (user) => {
  * 
  * @returns The current authenticated user or null if not authenticated
  */
-const getCurrentUser = (): User | null => {
+export const getCurrentUser = (): User | null => {
   return currentUser;
 };
 
@@ -56,7 +56,7 @@ const getCurrentUser = (): User | null => {
  * 
  * @returns A promise that resolves when authentication is complete
  */
-const ensureAuthentication = async (): Promise<User> => {
+export const ensureAuthentication = async (): Promise<User> => {
   const user = getCurrentUser();
   if (user) return user;
 
@@ -67,6 +67,4 @@ const ensureAuthentication = async (): Promise<User> => {
     console.error('Error signing in anonymously:', error);
     throw error;
   }
-};
-
-export { db, collections, auth, getCurrentUser, ensureAuthentication }; 
+}; 
