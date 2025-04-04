@@ -2,6 +2,609 @@
   text-align: center;
 }
 
+/* Banner styling */
+.banner {
+  background-color: #C19A6B;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-title {
+  margin: 0;
+  font-size: 24px;
+  flex-grow: 0;
+  text-align: left;
+  white-space: nowrap;
+  margin-right: 20px;
+}
+
+/* Tab buttons styling */
+.banner-tabs {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tab-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.tab-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tab-button.active {
+  background-color: rgba(255, 255, 255, 0.3);
+  font-weight: bold;
+}
+
+.banner-date {
+  margin: 0;
+  font-size: 16px;
+  text-align: right;
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+.App-content {
+  padding: 20px;
+}
+
+/* 
+ * Meal Planner Layout Styling
+ *
+ * We use flexbox to create a two-column layout:
+ * - Calendar section takes up 2/3 of the width
+ * - Meal details section takes up 1/3 of the width
+ */
+.meal-planner-container {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 150px); /* Adjust height to fill the screen minus the banner */
+}
+
+.calendar-section {
+  flex: 2; /* Takes up 2/3 of the available space */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling if content is too tall */
+}
+
+.meal-details-section {
+  flex: 1; /* Takes up 1/3 of the available space */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling if content is too tall */
+}
+
+/* 
+ * Calendar Component Styling
+ *
+ * The calendar has three main parts:
+ * 1. Header with month and year
+ * 2. Days of the week header (Sun, Mon, etc.)
+ * 3. Grid of days
+ */
+.calendar {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.calendar-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.day-name {
+  text-align: center;
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.calendar-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.calendar-day:hover {
+  background-color: #f8f9fa;
+}
+
+.calendar-day.empty {
+  background-color: transparent;
+  cursor: default;
+}
+
+.calendar-day.current-day {
+  background-color: #e3f2fd;
+  font-weight: bold;
+}
+
+.calendar-day.selected-day {
+  background-color: #007bff;
+  color: white;
+}
+
+.meal-indicator {
+  position: absolute;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  background-color: #28a745;
+  border-radius: 50%;
+}
+
+/* 
+ * Meal Details Component Styling
+ */
+.meal-details {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.meal-details h2 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.meal-selector {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.meal-selector label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.meal-dropdown {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px;
+}
+
+.ingredients-list {
+  flex-grow: 1;
+}
+
+.ingredients-list h3 {
+  margin-top: 0;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.ingredients-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.ingredients-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.ingredients-list li:last-child {
+  border-bottom: none;
+}
+
+/* 
+ * Save Button and Message Styling
+ */
+.save-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.save-button {
+  background-color: #C19A6B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  max-width: 200px;
+}
+
+.save-button:hover {
+  background-color: #8B7355;
+}
+
+.save-button:active {
+  transform: translateY(1px);
+}
+
+.saved-message {
+  margin-top: 10px;
+  color: #4CAF50;
+  font-weight: bold;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 
+ * Recipe Library Tab Styling
+ */
+.recipe-library {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.recipe-library h2 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Recipe Selection Styling */
+.recipe-selection {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.recipe-selection label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.recipe-dropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+}
+
+/* Selected Recipe Display */
+.selected-recipe {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.selected-recipe h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.selected-recipe ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-recipe li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  color: #666;
+}
+
+.selected-recipe li:last-child {
+  border-bottom: none;
+}
+
+/* Add New Recipe Section */
+.add-recipe-section {
+  margin-top: 30px;
+}
+
+.add-recipe-button {
+  background-color: #C19A6B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.add-recipe-button:hover {
+  background-color: #8B7355;
+}
+
+/* New Recipe Form */
+.new-recipe-form {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.recipe-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.ingredient-input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.ingredient-input-group .recipe-input {
+  flex: 1;
+}
+
+.add-ingredient-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-ingredient-button:hover {
+  background-color: #45a049;
+}
+
+/* Ingredients List in New Recipe Form */
+.new-recipe-form .ingredients-list {
+  margin: 20px 0;
+}
+
+.new-recipe-form .ingredients-list h4 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.new-recipe-form .ingredients-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.new-recipe-form .ingredients-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.remove-ingredient-button {
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+.remove-ingredient-button:hover {
+  color: #cc0000;
+}
+
+/* Save Recipe Button */
+.save-recipe-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.save-recipe-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.save-recipe-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Save Confirmation Message */
+.recipe-saved-message {
+  margin-top: 20px;
+  color: #4CAF50;
+  font-weight: bold;
+  animation: fadeIn 0.5s;
+}
+
+/* 
+ * Shopping List Tab Styling
+ */
+.shopping-list {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.shopping-list h2 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Week Selection Styling */
+.week-selection {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.week-selection label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.week-dropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+}
+
+/* Aggregated Ingredients List */
+.aggregated-ingredients {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.aggregated-ingredients h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.aggregated-ingredients ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aggregated-ingredients li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  color: #666;
+  transition: background-color 0.2s;
+}
+
+.aggregated-ingredients li:last-child {
+  border-bottom: none;
+}
+
+/* Shopping List Item Styling */
+.shopping-item-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.shopping-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #C19A6B;
+}
+
+.shopping-item-text {
+  flex: 1;
+}
+
+/* Checked Item Styling */
+.aggregated-ingredients li.checked {
+  background-color: #f8f8f8;
+}
+
+.aggregated-ingredients li.checked .shopping-item-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* Original React template styles below */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +638,193 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Recipe Library Styles */
+.recipe-library {
+  padding: 20px;
+}
+
+.recipe-selection {
+  margin-bottom: 20px;
+}
+
+.recipe-dropdown {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.selected-recipe {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.recipe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.edit-recipe-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-recipe-button:hover {
+  background-color: #5a6268;
+}
+
+.new-recipe-form {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.recipe-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.ingredient-input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.add-ingredient-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-ingredient-button:hover {
+  background-color: #218838;
+}
+
+.ingredients-list {
+  margin-top: 15px;
+}
+
+.ingredients-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.ingredients-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.remove-ingredient-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.remove-ingredient-button:hover {
+  background-color: #c82333;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-recipe-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-recipe-button:hover {
+  background-color: #0056b3;
+}
+
+.save-recipe-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #5a6268;
+}
+
+.add-recipe-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-recipe-button:hover {
+  background-color: #218838;
+}
+
+.recipe-saved-message {
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 20px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
