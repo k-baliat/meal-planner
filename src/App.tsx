@@ -472,22 +472,32 @@ const App: React.FC = () => {
 
       if (!weekPlan) return [];
 
-      const ingredients: string[] = [];
+      // Create a map to store ingredient counts
+      const ingredientCounts = new Map<string, number>();
 
       // Iterate through each day of the week
-      Object.entries(weekPlan).forEach(([day, recipeId]) => {
-        // Find the recipe
-        const recipe = recipes.find(r => r.id === recipeId);
-        if (!recipe) return;
+      Object.entries(weekPlan).forEach(([day, mealIds]) => {
+        // Split mealIds and process each meal
+        const mealIdList = mealIds.split(',');
+        mealIdList.forEach(mealId => {
+          // Find the recipe
+          const recipe = recipes.find(r => r.id === mealId);
+          if (!recipe) return;
 
-        // Add each ingredient with the recipe name in parentheses
-        recipe.ingredients.forEach((ingredient: string) => {
-          ingredients.push(`${ingredient} (${recipe.name})`);
+          // Add each ingredient to the count map
+          recipe.ingredients.forEach((ingredient: string) => {
+            // Normalize the ingredient name (case-insensitive)
+            const normalizedIngredient = ingredient.toLowerCase().trim();
+            const currentCount = ingredientCounts.get(normalizedIngredient) || 0;
+            ingredientCounts.set(normalizedIngredient, currentCount + 1);
+          });
         });
       });
 
-      // Remove duplicates while preserving order
-      return Array.from(new Set(ingredients));
+      // Convert the map to an array of formatted strings
+      return Array.from(ingredientCounts.entries())
+        .map(([ingredient, count]) => `${ingredient} (x${count})`)
+        .sort((a, b) => a.localeCompare(b));
     } catch (error) {
       console.error('Error getting aggregated ingredients:', error);
       return [];
@@ -596,15 +606,66 @@ const App: React.FC = () => {
    * It includes a dropdown to select different recipes and shows the ingredients.
    */
   const MealDetails = () => {
+    const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
+
+    // Load pre-selected meals when date changes
+    useEffect(() => {
+      if (selectedDate) {
+        const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+        const weekRange = getWeekRange(selectedDate);
+        const mealPlan = weeklyMealPlans[weekRange];
+        if (mealPlan && mealPlan[dayOfWeek]) {
+          setSelectedMeals(mealPlan[dayOfWeek].split(','));
+        } else {
+          setSelectedMeals([]);
+        }
+      }
+    }, [selectedDate, weeklyMealPlans]);
+
+    const handleMealChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const newMeal = event.target.value;
+      if (newMeal && !selectedMeals.includes(newMeal)) {
+        setSelectedMeals([...selectedMeals, newMeal]);
+      }
+    };
+
+    const handleRemoveMeal = (mealId: string) => {
+      setSelectedMeals(selectedMeals.filter(id => id !== mealId));
+    };
+
+    const handleSaveMeal = async () => {
+      if (!selectedDate || selectedMeals.length === 0) return;
+
+      try {
+        await ensureAuthentication();
+        const weekRange = getWeekRange(selectedDate);
+        const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+        const mealPlanRef = doc(db, collections.mealPlans, weekRange);
+        const mealPlanDoc = await getDocs(collection(db, collections.mealPlans));
+        const existingPlan = mealPlanDoc.docs.find(doc => doc.id === weekRange);
+
+        const updatedPlan = {
+          ...(existingPlan?.data() || {}),
+          [dayOfWeek]: selectedMeals.join(',')
+        };
+
+        await setDoc(mealPlanRef, updatedPlan);
+        setSelectedMeals([]);
+      } catch (error) {
+        console.error('Error saving meal plan:', error);
+      }
+    };
+
     return (
       <div className="meal-details">
         <h2>{formatDate(selectedDate)}</h2>
         
         <div className="meal-selector">
-          <label htmlFor="meal-dropdown">Select Recipe:</label>
+          <label htmlFor="meal-dropdown">Add Recipe:</label>
           <select 
             id="meal-dropdown" 
-            value={selectedMeal} 
+            value="" 
             onChange={handleMealChange}
             className="meal-dropdown"
           >
@@ -616,17 +677,47 @@ const App: React.FC = () => {
             ))}
           </select>
         </div>
-        
+
+        {selectedMeals.length > 0 && (
+          <div className="selected-meals">
+            <h3>Selected Meals:</h3>
+            {selectedMeals.map(mealId => {
+              const recipe = recipes.find(r => r.id === mealId);
+              return (
+                <div key={mealId} className="selected-meal">
+                  <span>{recipe?.name}</span>
+                  <button 
+                    className="remove-meal-button"
+                    onClick={() => handleRemoveMeal(mealId)}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         <div className="ingredients-list">
           <h3>Ingredients:</h3>
-          {selectedMeal ? (
+          {selectedMeals.length > 0 ? (
             <ul>
-              {recipes.find(r => r.id === selectedMeal)?.ingredients.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
-              ))}
+              {selectedMeals.map(mealId => {
+                const recipe = recipes.find(r => r.id === mealId);
+                return (
+                  <li key={mealId} className="recipe-ingredients">
+                    <h4>{recipe?.name}</h4>
+                    <ul>
+                      {recipe?.ingredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient}</li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
-            <p>Select a recipe to view ingredients</p>
+            <p>Select recipes to view ingredients</p>
           )}
         </div>
         
@@ -634,16 +725,10 @@ const App: React.FC = () => {
           <button 
             className="save-button" 
             onClick={handleSaveMeal}
-            disabled={!selectedMeal}
+            disabled={selectedMeals.length === 0}
           >
             Save Meal Plan
           </button>
-          
-          {savedMessage && (
-            <div className="saved-message">
-              {savedMessage}
-            </div>
-          )}
         </div>
       </div>
     );
