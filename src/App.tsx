@@ -797,6 +797,7 @@ const App: React.FC = () => {
     const [isAddingRecipe, setIsAddingRecipe] = useState(false);
     const [recipeSaved, setRecipeSaved] = useState(false);
     const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
+    const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | ''>('');
 
     // Reset local state when toggling add recipe form
     useEffect(() => {
@@ -936,12 +937,36 @@ const App: React.FC = () => {
       setLocalIngredients([]);
     };
 
-    // Sort recipes alphabetically by name
-    const sortedRecipes = [...recipes].sort((a, b) => a.name.localeCompare(b.name));
+    // Filter recipes by selected cuisine
+    const filteredRecipes = selectedCuisine
+      ? recipes.filter(recipe => recipe.cuisine === selectedCuisine)
+      : recipes;
+
+    // Sort filtered recipes alphabetically
+    const sortedRecipes = [...filteredRecipes].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
       <div className="recipe-library">
         <h2>Recipe Library</h2>
+        
+        <div className="recipe-filters">
+          <div className="cuisine-filter">
+            <label htmlFor="cuisine-filter">Filter by Cuisine:</label>
+            <select
+              id="cuisine-filter"
+              value={selectedCuisine}
+              onChange={(e) => setSelectedCuisine(e.target.value as Cuisine | '')}
+              className="cuisine-dropdown"
+            >
+              <option value="">All Cuisines</option>
+              {CUISINES.map((cuisine) => (
+                <option key={cuisine} value={cuisine}>
+                  {cuisine}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         
         <div className="recipe-selection">
           <label htmlFor="recipe-dropdown">Select Recipe:</label>
@@ -964,6 +989,9 @@ const App: React.FC = () => {
           <div className="selected-recipe">
             <div className="recipe-header">
               <h3>{recipes.find(r => r.id === selectedRecipe)?.name}</h3>
+              <span className="cuisine-tag">
+                {recipes.find(r => r.id === selectedRecipe)?.cuisine}
+              </span>
               <button 
                 className="edit-recipe-button"
                 onClick={() => handleEditRecipe(recipes.find(r => r.id === selectedRecipe)!)}

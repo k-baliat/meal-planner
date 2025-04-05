@@ -762,3 +762,50 @@ body {
   font-size: 0.8rem;
   margin-bottom: 1rem;
 }
+
+.recipe-filters {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+}
+
+.recipe-filters .cuisine-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recipe-filters .cuisine-filter label {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.recipe-filters .cuisine-dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: white;
+}
+
+.recipe-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.recipe-header h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.recipe-header .cuisine-tag {
+  padding: 0.25rem 0.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
