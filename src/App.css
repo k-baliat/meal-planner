@@ -96,16 +96,60 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  height: calc(100vh - 120px); /* Subtract banner height */
+  overflow: hidden; /* Prevent double scrollbars */
 }
 
 .calendar-section {
   flex: 2;
   min-width: 300px;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .meal-details-section {
   flex: 1;
   min-width: 250px;
+  max-height: 100%;
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 0.5rem; /* Add space for scrollbar */
+}
+
+/* Custom scrollbar for meal details */
+.meal-details-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.meal-details-section::-webkit-scrollbar-track {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+.meal-details-section::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.meal-details-section::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-color);
+}
+
+/* Ensure the meal details content doesn't overflow */
+.meal-details {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredients-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.save-section {
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 /* Calendar styles */
@@ -181,13 +225,6 @@ body {
 }
 
 /* Meal details styles */
-.meal-details {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .meal-selector {
   margin: 1rem 0;
 }
@@ -201,10 +238,6 @@ body {
   margin-top: 0.5rem;
 }
 
-.ingredients-list {
-  margin-top: 1rem;
-}
-
 .ingredients-list ul {
   list-style-type: none;
   padding-left: 0;
@@ -215,10 +248,6 @@ body {
   padding: 0.5rem;
   background-color: var(--secondary-color);
   border-radius: 4px;
-}
-
-.save-section {
-  margin-top: 1.5rem;
 }
 
 .save-button {
