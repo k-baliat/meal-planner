@@ -552,29 +552,27 @@ const App: React.FC = () => {
    * and allows the user to select a date.
    */
   const Calendar = () => {
-    // Get the current date information
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    
-    // Create an array of day names for the calendar header
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    
-    // Get the number of days in the current month
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-    // Get the day of the week for the first day of the month (0-6, where 0 is Sunday)
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-    
-    // Create an array to hold all the day cells for the calendar
+
+    const getDaysInMonth = (year: number, month: number) => {
+      return new Date(year, month + 1, 0).getDate();
+    };
+
+    const getFirstDayOfMonth = (year: number, month: number) => {
+      return new Date(year, month, 1).getDay();
+    };
+
+    const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+    const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
+
     const calendarDays = [];
-    
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       calendarDays.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
     }
-    
-    // Add cells for each day of the month
+
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
       const isCurrentDay = day === currentDate.getDate() && 
@@ -584,10 +582,18 @@ const App: React.FC = () => {
                         currentMonth === selectedDate.getMonth() && 
                         currentYear === selectedDate.getFullYear();
       
-      // Check if this date has a meal assigned
+      // Check if this date has meals assigned
       const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
-      const hasMeal = weeklyMealPlans[getWeekRange(date)]?.[dayOfWeek];
-      
+      const weekRange = getWeekRange(date);
+      const mealPlan = weeklyMealPlans[weekRange];
+      const hasMeals = mealPlan && mealPlan[dayOfWeek];
+      const mealNames = hasMeals 
+        ? mealPlan[dayOfWeek].split(',')
+          .map(id => recipes.find(r => r.id === id)?.name)
+          .filter(Boolean)
+          .join(', ')
+        : '';
+
       calendarDays.push(
         <div 
           key={`day-${day}`} 
@@ -595,11 +601,16 @@ const App: React.FC = () => {
           onClick={() => handleDateSelect(date)}
         >
           {day}
-          {hasMeal && <div className="meal-indicator" />}
+          {hasMeals && <div className="meal-indicator" />}
+          {hasMeals && (
+            <div className="meal-tooltip">
+              {mealNames}
+            </div>
+          )}
         </div>
       );
     }
-    
+
     return (
       <div className="calendar">
         <div className="calendar-header">
