@@ -352,7 +352,7 @@ body {
   border-radius: 4px;
   font-size: 1rem;
   margin-top: 0.5rem;
-  box-sizing: border-box;
+  background-color: white;
 }
 
 .ingredient-input-group {
@@ -623,4 +623,142 @@ body {
   background-color: var(--secondary-color);
   border-radius: 4px;
   transition: opacity 0.2s;
+}
+
+.misc-items-section {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+}
+
+.misc-items-section h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+}
+
+.misc-item-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.misc-item-text-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.add-misc-item-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-misc-item-button:hover:not(:disabled) {
+  background-color: var(--hover-color);
+}
+
+.add-misc-item-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.misc-items-list {
+  margin-top: 1.5rem;
+}
+
+.misc-items-list h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+}
+
+.remove-misc-item-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  margin-left: auto;
+}
+
+.remove-misc-item-button:hover {
+  color: #c82333;
+}
+
+.recipe-ingredients-section {
+  margin-bottom: 1.5rem;
+}
+
+.recipe-ingredients-section h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+}
+
+.cuisine-filter {
+  margin-bottom: 1rem;
+}
+
+.cuisine-dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  background-color: white;
+}
+
+.recipe-selector {
+  margin-top: 1rem;
+}
+
+.meal-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+}
+
+/* Update existing styles to accommodate new layout */
+.recipe-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  background-color: white;
+}
+
+/* Add styles for the selected recipe display */
+.selected-recipe {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+}
+
+.selected-recipe h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary-color);
+}
+
+.selected-recipe .cuisine-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
 }

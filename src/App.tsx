@@ -38,6 +38,7 @@ interface MealIngredientsType {
 interface Recipe {
   id?: string;  // Optional because it's added by Firestore
   name: string;
+  cuisine: string;
   ingredients: string[];
 }
 
@@ -57,6 +58,20 @@ interface ShoppingListItem {
 interface ShoppingList {
   [key: string]: ShoppingListItem;  // ingredient: ShoppingListItem
 }
+
+// Define available cuisines as a constant
+const CUISINES = [
+  'American',
+  'Asian',
+  'Colombian',
+  'Hawaiian',
+  'Italian',
+  'Kenyan',
+  'Mexican',
+  'Misc'
+] as const;
+
+type Cuisine = typeof CUISINES[number];
 
 /**
  * App Component - The main component of our application
@@ -404,6 +419,7 @@ const App: React.FC = () => {
     try {
       const recipe: Omit<Recipe, 'id'> = {
         name: newRecipeName.trim(),
+        cuisine: 'Misc',
         ingredients: newRecipeIngredients
       };
 
@@ -607,6 +623,7 @@ const App: React.FC = () => {
    */
   const MealDetails = () => {
     const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
+    const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | ''>('');
 
     // Load pre-selected meals when date changes
     useEffect(() => {
@@ -621,6 +638,14 @@ const App: React.FC = () => {
         }
       }
     }, [selectedDate, weeklyMealPlans]);
+
+    // Filter recipes by selected cuisine
+    const filteredRecipes = selectedCuisine
+      ? recipes.filter(recipe => recipe.cuisine === selectedCuisine)
+      : recipes;
+
+    // Sort filtered recipes alphabetically
+    const sortedRecipes = [...filteredRecipes].sort((a, b) => a.name.localeCompare(b.name));
 
     const handleMealChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
       const newMeal = event.target.value;
@@ -662,20 +687,39 @@ const App: React.FC = () => {
         <h2>{formatDate(selectedDate)}</h2>
         
         <div className="meal-selector">
-          <label htmlFor="meal-dropdown">Add Recipe:</label>
-          <select 
-            id="meal-dropdown" 
-            value="" 
-            onChange={handleMealChange}
-            className="meal-dropdown"
-          >
-            <option value="">Choose a recipe...</option>
-            {recipes.map((recipe) => (
-              <option key={recipe.id} value={recipe.id}>
-                {recipe.name}
-              </option>
-            ))}
-          </select>
+          <div className="cuisine-filter">
+            <label htmlFor="cuisine-filter">Filter by Cuisine:</label>
+            <select
+              id="cuisine-filter"
+              value={selectedCuisine}
+              onChange={(e) => setSelectedCuisine(e.target.value as Cuisine | '')}
+              className="cuisine-dropdown"
+            >
+              <option value="">All Cuisines</option>
+              {CUISINES.map((cuisine) => (
+                <option key={cuisine} value={cuisine}>
+                  {cuisine}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="recipe-selector">
+            <label htmlFor="meal-dropdown">Add Recipe:</label>
+            <select 
+              id="meal-dropdown" 
+              value="" 
+              onChange={handleMealChange}
+              className="meal-dropdown"
+            >
+              <option value="">Choose a recipe...</option>
+              {sortedRecipes.map((recipe) => (
+                <option key={recipe.id} value={recipe.id}>
+                  {recipe.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {selectedMeals.length > 0 && (
@@ -747,6 +791,7 @@ const App: React.FC = () => {
   const RecipeLibrary = () => {
     // Local state for managing input values
     const [localRecipeName, setLocalRecipeName] = useState('');
+    const [localCuisine, setLocalCuisine] = useState<Cuisine>('Misc');
     const [localIngredient, setLocalIngredient] = useState('');
     const [localIngredients, setLocalIngredients] = useState<string[]>([]);
     const [isAddingRecipe, setIsAddingRecipe] = useState(false);
@@ -757,6 +802,7 @@ const App: React.FC = () => {
     useEffect(() => {
       if (!isAddingRecipe && !editingRecipe) {
         setLocalRecipeName('');
+        setLocalCuisine('Misc');
         setLocalIngredient('');
         setLocalIngredients([]);
         setRecipeSaved(false);
@@ -767,6 +813,7 @@ const App: React.FC = () => {
     useEffect(() => {
       if (editingRecipe) {
         setLocalRecipeName(editingRecipe.name);
+        setLocalCuisine(editingRecipe.cuisine as Cuisine);
         setLocalIngredients(editingRecipe.ingredients);
       }
     }, [editingRecipe]);
@@ -808,6 +855,7 @@ const App: React.FC = () => {
           const updatedRecipe: Recipe = {
             id: editingRecipe.id,
             name: localRecipeName.trim(),
+            cuisine: localCuisine,
             ingredients: localIngredients
           };
           
@@ -815,6 +863,7 @@ const App: React.FC = () => {
           const recipeRef: DocumentReference<DocumentData> = doc(db, collections.recipes, editingRecipe.id);
           await updateDoc(recipeRef, {
             name: localRecipeName.trim(),
+            cuisine: localCuisine,
             ingredients: localIngredients
           });
           
@@ -831,6 +880,7 @@ const App: React.FC = () => {
           // Save new recipe
           const recipe: Omit<Recipe, 'id'> = {
             name: localRecipeName.trim(),
+            cuisine: localCuisine,
             ingredients: localIngredients
           };
 
@@ -839,6 +889,7 @@ const App: React.FC = () => {
           const newRecipe: Recipe = {
             id: newRecipeId,
             name: localRecipeName.trim(),
+            cuisine: localCuisine,
             ingredients: localIngredients
           };
           
@@ -847,6 +898,7 @@ const App: React.FC = () => {
         
         // Reset form
         setLocalRecipeName('');
+        setLocalCuisine('Misc');
         setLocalIngredient('');
         setLocalIngredients([]);
         setIsAddingRecipe(false);
@@ -879,15 +931,18 @@ const App: React.FC = () => {
     const handleCancelEdit = () => {
       setEditingRecipe(null);
       setLocalRecipeName('');
+      setLocalCuisine('Misc');
       setLocalIngredient('');
       setLocalIngredients([]);
     };
+
+    // Sort recipes alphabetically by name
+    const sortedRecipes = [...recipes].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
       <div className="recipe-library">
         <h2>Recipe Library</h2>
         
-        {/* Recipe Selection Section */}
         <div className="recipe-selection">
           <label htmlFor="recipe-dropdown">Select Recipe:</label>
           <select 
@@ -897,7 +952,7 @@ const App: React.FC = () => {
             className="recipe-dropdown"
           >
             <option value="">Choose a recipe...</option>
-            {recipes.map((recipe) => (
+            {sortedRecipes.map((recipe) => (
               <option key={recipe.id} value={recipe.id}>
                 {recipe.name}
               </option>
@@ -905,7 +960,6 @@ const App: React.FC = () => {
           </select>
         </div>
 
-        {/* Selected Recipe Display */}
         {selectedRecipe && !editingRecipe && (
           <div className="selected-recipe">
             <div className="recipe-header">
@@ -925,7 +979,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Add/Edit Recipe Form */}
         {(isAddingRecipe || editingRecipe) && (
           <div className="new-recipe-form">
             <h3>{editingRecipe ? 'Edit Recipe' : 'Add New Recipe'}</h3>
@@ -940,6 +993,22 @@ const App: React.FC = () => {
                 placeholder="Enter recipe name"
                 className="recipe-input"
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="recipe-cuisine">Cuisine:</label>
+              <select
+                id="recipe-cuisine"
+                value={localCuisine}
+                onChange={(e) => setLocalCuisine(e.target.value as Cuisine)}
+                className="recipe-input"
+              >
+                {CUISINES.map((cuisine) => (
+                  <option key={cuisine} value={cuisine}>
+                    {cuisine}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
@@ -963,7 +1032,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Ingredients List */}
             {localIngredients.length > 0 && (
               <div className="ingredients-list">
                 <h4>Ingredients:</h4>
@@ -1001,7 +1069,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Add New Recipe Button */}
         {!isAddingRecipe && !editingRecipe && (
           <div className="add-recipe-section">
             <button 
@@ -1013,7 +1080,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Save Confirmation Message */}
         {recipeSaved && (
           <div className="recipe-saved-message">
             Recipe {editingRecipe ? 'updated' : 'saved'} successfully!
@@ -1036,12 +1102,15 @@ const App: React.FC = () => {
   const ShoppingList = () => {
     const [ingredients, setIngredients] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+    const [miscItem, setMiscItem] = useState('');
+    const [miscItems, setMiscItems] = useState<string[]>([]);
 
-    // Load ingredients when week selection changes
+    // Load ingredients and misc items when week selection changes
     useEffect(() => {
-      const loadIngredients = async () => {
+      const loadItems = async () => {
         if (!selectedWeek) {
           setIngredients([]);
+          setMiscItems([]);
           return;
         }
 
@@ -1049,22 +1118,53 @@ const App: React.FC = () => {
         try {
           const aggregatedIngredients = await getAggregatedIngredients();
           setIngredients(aggregatedIngredients);
+          
+          // Load misc items from localStorage for the selected week
+          const savedMiscItems = localStorage.getItem(`miscItems-${selectedWeek}`);
+          if (savedMiscItems) {
+            setMiscItems(JSON.parse(savedMiscItems));
+          } else {
+            setMiscItems([]);
+          }
         } catch (error) {
-          console.error('Error loading ingredients:', error);
+          console.error('Error loading items:', error);
           setIngredients([]);
+          setMiscItems([]);
         } finally {
           setLoading(false);
         }
       };
 
-      loadIngredients();
+      loadItems();
     }, [selectedWeek]);
+
+    const handleAddMiscItem = () => {
+      if (miscItem.trim()) {
+        const newMiscItems = [...miscItems, miscItem.trim()];
+        setMiscItems(newMiscItems);
+        setMiscItem('');
+        
+        // Save to localStorage
+        if (selectedWeek) {
+          localStorage.setItem(`miscItems-${selectedWeek}`, JSON.stringify(newMiscItems));
+        }
+      }
+    };
+
+    const handleRemoveMiscItem = (index: number) => {
+      const newMiscItems = miscItems.filter((_, i) => i !== index);
+      setMiscItems(newMiscItems);
+      
+      // Update localStorage
+      if (selectedWeek) {
+        localStorage.setItem(`miscItems-${selectedWeek}`, JSON.stringify(newMiscItems));
+      }
+    };
 
     return (
       <div className="shopping-list">
         <h2>Shopping List</h2>
         
-        {/* Week Selection Section */}
         <div className="week-selection">
           <label htmlFor="week-dropdown">Select Week:</label>
           <select 
@@ -1087,30 +1187,89 @@ const App: React.FC = () => {
           </select>
         </div>
 
-        {/* Aggregated Ingredients List */}
         {selectedWeek && (
           <div className="aggregated-ingredients">
             <h3>Shopping List for {selectedWeek}</h3>
+            
+            {/* Add Miscellaneous Items Section */}
+            <div className="misc-items-section">
+              <h4>Add Miscellaneous Items</h4>
+              <div className="misc-item-input">
+                <input
+                  type="text"
+                  value={miscItem}
+                  onChange={(e) => setMiscItem(e.target.value)}
+                  placeholder="Enter item name..."
+                  className="misc-item-text-input"
+                />
+                <button 
+                  onClick={handleAddMiscItem}
+                  className="add-misc-item-button"
+                  disabled={!miscItem.trim()}
+                >
+                  Add Item
+                </button>
+              </div>
+            </div>
+
             {loading ? (
-              <p>Loading ingredients...</p>
-            ) : ingredients.length === 0 ? (
-              <p>No ingredients found for this week.</p>
+              <p>Loading items...</p>
             ) : (
-              <ul>
-                {ingredients.map((ingredient, index) => (
-                  <li key={index} className={checkedItems.has(ingredient) ? 'checked' : ''}>
-                    <label className="shopping-item-label">
-                      <input
-                        type="checkbox"
-                        checked={checkedItems.has(ingredient)}
-                        onChange={() => handleToggleCheckedItem(ingredient)}
-                        className="shopping-checkbox"
-                      />
-                      <span className="shopping-item-text">{ingredient}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
+              <>
+                {/* Recipe Ingredients List */}
+                {ingredients.length > 0 && (
+                  <div className="recipe-ingredients-section">
+                    <h4>Recipe Ingredients</h4>
+                    <ul>
+                      {ingredients.map((ingredient, index) => (
+                        <li key={index} className={checkedItems.has(ingredient) ? 'checked' : ''}>
+                          <label className="shopping-item-label">
+                            <input
+                              type="checkbox"
+                              checked={checkedItems.has(ingredient)}
+                              onChange={() => handleToggleCheckedItem(ingredient)}
+                              className="shopping-checkbox"
+                            />
+                            <span className="shopping-item-text">{ingredient}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Miscellaneous Items List */}
+                {miscItems.length > 0 && (
+                  <div className="misc-items-list">
+                    <h4>Miscellaneous Items</h4>
+                    <ul>
+                      {miscItems.map((item, index) => (
+                        <li key={index} className={checkedItems.has(item) ? 'checked' : ''}>
+                          <label className="shopping-item-label">
+                            <input
+                              type="checkbox"
+                              checked={checkedItems.has(item)}
+                              onChange={() => handleToggleCheckedItem(item)}
+                              className="shopping-checkbox"
+                            />
+                            <span className="shopping-item-text">{item}</span>
+                            <button 
+                              className="remove-misc-item-button"
+                              onClick={() => handleRemoveMiscItem(index)}
+                            >
+                              ×
+                            </button>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {ingredients.length === 0 && miscItems.length === 0 && (
+                  <p>No items found for this week.</p>
+                )}
+              </>
             )}
           </div>
         )}
