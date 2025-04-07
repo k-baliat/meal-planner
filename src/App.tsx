@@ -17,7 +17,8 @@ import {
   DocumentSnapshot,
   QueryDocumentSnapshot,
   DocumentReference,
-  DocumentData
+  DocumentData,
+  getDoc
 } from 'firebase/firestore';
 
 
@@ -119,17 +120,18 @@ const App: React.FC = () => {
    * Get Week Range Function
    * 
    * This function takes a date and returns a string representing the week range
-   * from Sunday to Saturday of that week.
+   * from Monday to Sunday of that week.
    * 
    * @param date - The date to get the week range for
    * @returns A string in the format "Month Day Year - Month Day Year"
    */
   const getWeekRange = (date: Date): string => {
     const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - date.getDay()); // Set to Sunday
+    // Set to Monday (1) instead of Sunday (0)
+    startOfWeek.setDate(date.getDate() - (date.getDay() || 7) + 1);
     
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Set to Saturday
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Set to Sunday
     
     const formatDate = (d: Date) => {
       return d.toLocaleDateString('en-US', { 
@@ -1143,6 +1145,7 @@ const App: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [miscItem, setMiscItem] = useState('');
     const [miscItems, setMiscItems] = useState<string[]>([]);
+    const [viewMode, setViewMode] = useState<'shopping' | 'overview'>('shopping');
 
     // Load ingredients and misc items when week selection changes
     useEffect(() => {
@@ -1158,10 +1161,13 @@ const App: React.FC = () => {
           const aggregatedIngredients = await getAggregatedIngredients();
           setIngredients(aggregatedIngredients);
           
-          // Load misc items from localStorage for the selected week
-          const savedMiscItems = localStorage.getItem(`miscItems-${selectedWeek}`);
-          if (savedMiscItems) {
-            setMiscItems(JSON.parse(savedMiscItems));
+          // Load misc items from Firestore for the selected week
+          const shoppingListRef = doc(db, collections.shoppingLists, selectedWeek);
+          const shoppingListDoc = await getDoc(shoppingListRef);
+          
+          if (shoppingListDoc.exists()) {
+            const data = shoppingListDoc.data();
+            setMiscItems(data.miscItems || []);
           } else {
             setMiscItems([]);
           }
@@ -1177,26 +1183,44 @@ const App: React.FC = () => {
       loadItems();
     }, [selectedWeek]);
 
-    const handleAddMiscItem = () => {
-      if (miscItem.trim()) {
+    const handleAddMiscItem = async () => {
+      if (!miscItem.trim() || !selectedWeek) return;
+
+      try {
+        await ensureAuthentication();
         const newMiscItems = [...miscItems, miscItem.trim()];
+        
+        // Save to Firestore
+        const shoppingListRef = doc(db, collections.shoppingLists, selectedWeek);
+        await setDoc(shoppingListRef, {
+          miscItems: newMiscItems,
+          weekRange: selectedWeek
+        }, { merge: true });
+        
         setMiscItems(newMiscItems);
         setMiscItem('');
-        
-        // Save to localStorage
-        if (selectedWeek) {
-          localStorage.setItem(`miscItems-${selectedWeek}`, JSON.stringify(newMiscItems));
-        }
+      } catch (error) {
+        console.error('Error adding misc item:', error);
       }
     };
 
-    const handleRemoveMiscItem = (index: number) => {
-      const newMiscItems = miscItems.filter((_, i) => i !== index);
-      setMiscItems(newMiscItems);
-      
-      // Update localStorage
-      if (selectedWeek) {
-        localStorage.setItem(`miscItems-${selectedWeek}`, JSON.stringify(newMiscItems));
+    const handleRemoveMiscItem = async (index: number) => {
+      if (!selectedWeek) return;
+
+      try {
+        await ensureAuthentication();
+        const newMiscItems = miscItems.filter((_, i) => i !== index);
+        
+        // Update Firestore
+        const shoppingListRef = doc(db, collections.shoppingLists, selectedWeek);
+        await setDoc(shoppingListRef, {
+          miscItems: newMiscItems,
+          weekRange: selectedWeek
+        }, { merge: true });
+        
+        setMiscItems(newMiscItems);
+      } catch (error) {
+        console.error('Error removing misc item:', error);
       }
     };
 
@@ -1227,88 +1251,143 @@ const App: React.FC = () => {
         </div>
 
         {selectedWeek && (
+          <div className="view-toggle">
+            <label>
+              <input
+                type="radio"
+                name="shoppingViewMode"
+                value="shopping"
+                checked={viewMode === 'shopping'}
+                onChange={() => setViewMode('shopping')}
+              />
+              Shopping List
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="shoppingViewMode"
+                value="overview"
+                checked={viewMode === 'overview'}
+                onChange={() => setViewMode('overview')}
+              />
+              Overview
+            </label>
+          </div>
+        )}
+
+        {selectedWeek && (
           <div className="aggregated-ingredients">
-            <h3>Shopping List for {selectedWeek}</h3>
+            <h3>{viewMode === 'shopping' ? 'Shopping List' : 'Meal Overview'} for {selectedWeek}</h3>
             
-            {/* Add Miscellaneous Items Section */}
-            <div className="misc-items-section">
-              <h4>Add Miscellaneous Items</h4>
-              <div className="misc-item-input">
-                <input
-                  type="text"
-                  value={miscItem}
-                  onChange={(e) => setMiscItem(e.target.value)}
-                  placeholder="Enter item name..."
-                  className="misc-item-text-input"
-                />
-                <button 
-                  onClick={handleAddMiscItem}
-                  className="add-misc-item-button"
-                  disabled={!miscItem.trim()}
-                >
-                  Add Item
-                </button>
-              </div>
-            </div>
-
-            {loading ? (
-              <p>Loading items...</p>
-            ) : (
+            {viewMode === 'shopping' ? (
               <>
-                {/* Recipe Ingredients List */}
-                {ingredients.length > 0 && (
-                  <div className="recipe-ingredients-section">
-                    <h4>Recipe Ingredients</h4>
-                    <ul>
-                      {ingredients.map((ingredient, index) => (
-                        <li key={index} className={checkedItems.has(ingredient) ? 'checked' : ''}>
-                          <label className="shopping-item-label">
-                            <input
-                              type="checkbox"
-                              checked={checkedItems.has(ingredient)}
-                              onChange={() => handleToggleCheckedItem(ingredient)}
-                              className="shopping-checkbox"
-                            />
-                            <span className="shopping-item-text">{ingredient}</span>
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
+                {/* Add Miscellaneous Items Section */}
+                <div className="misc-items-section">
+                  <h4>Add Miscellaneous Items</h4>
+                  <div className="misc-item-input">
+                    <input
+                      type="text"
+                      value={miscItem}
+                      onChange={(e) => setMiscItem(e.target.value)}
+                      placeholder="Enter item name..."
+                      className="misc-item-text-input"
+                    />
+                    <button 
+                      onClick={handleAddMiscItem}
+                      className="add-misc-item-button"
+                      disabled={!miscItem.trim()}
+                    >
+                      Add Item
+                    </button>
                   </div>
-                )}
+                </div>
 
-                {/* Miscellaneous Items List */}
-                {miscItems.length > 0 && (
-                  <div className="misc-items-list">
-                    <h4>Miscellaneous Items</h4>
-                    <ul>
-                      {miscItems.map((item, index) => (
-                        <li key={index} className={checkedItems.has(item) ? 'checked' : ''}>
-                          <label className="shopping-item-label">
-                            <input
-                              type="checkbox"
-                              checked={checkedItems.has(item)}
-                              onChange={() => handleToggleCheckedItem(item)}
-                              className="shopping-checkbox"
-                            />
-                            <span className="shopping-item-text">{item}</span>
-                            <button 
-                              className="remove-misc-item-button"
-                              onClick={() => handleRemoveMiscItem(index)}
-                            >
-                              ×
-                            </button>
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {loading ? (
+                  <p>Loading items...</p>
+                ) : (
+                  <>
+                    {/* Recipe Ingredients List */}
+                    {ingredients.length > 0 && (
+                      <div className="recipe-ingredients-section">
+                        <h4>Recipe Ingredients</h4>
+                        <ul>
+                          {ingredients.map((ingredient, index) => (
+                            <li key={index} className={checkedItems.has(ingredient) ? 'checked' : ''}>
+                              <label className="shopping-item-label">
+                                <input
+                                  type="checkbox"
+                                  checked={checkedItems.has(ingredient)}
+                                  onChange={() => handleToggleCheckedItem(ingredient)}
+                                  className="shopping-checkbox"
+                                />
+                                <span className="shopping-item-text">{ingredient}</span>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                {ingredients.length === 0 && miscItems.length === 0 && (
-                  <p>No items found for this week.</p>
+                    {/* Miscellaneous Items List */}
+                    {miscItems.length > 0 && (
+                      <div className="misc-items-list">
+                        <h4>Miscellaneous Items</h4>
+                        <ul>
+                          {miscItems.map((item, index) => (
+                            <li key={index} className={checkedItems.has(item) ? 'checked' : ''}>
+                              <label className="shopping-item-label">
+                                <input
+                                  type="checkbox"
+                                  checked={checkedItems.has(item)}
+                                  onChange={() => handleToggleCheckedItem(item)}
+                                  className="shopping-checkbox"
+                                />
+                                <span className="shopping-item-text">{item}</span>
+                                <button 
+                                  className="remove-misc-item-button"
+                                  onClick={() => handleRemoveMiscItem(index)}
+                                >
+                                  ×
+                                </button>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {ingredients.length === 0 && miscItems.length === 0 && (
+                      <p>No items found for this week.</p>
+                    )}
+                  </>
                 )}
               </>
+            ) : (
+              <div className="meal-overview">
+                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
+                  const mealPlan = weeklyMealPlans[selectedWeek];
+                  const mealIds = mealPlan?.[day]?.split(',') || [];
+                  return (
+                    <div key={day} className="day-meals">
+                      <h3>{day}</h3>
+                      {mealIds.map((mealId) => {
+                        const recipe = recipes.find(r => r.id === mealId);
+                        return recipe ? (
+                          <div key={mealId} className="meal-details">
+                            <h4>{recipe.name}</h4>
+                            <p className="cuisine-tag">{recipe.cuisine}</p>
+                            <ul>
+                              {recipe.ingredients.map((ingredient, index) => (
+                                <li key={index}>{ingredient}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
         )}
