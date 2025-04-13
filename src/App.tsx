@@ -588,7 +588,7 @@ const App: React.FC = () => {
       const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
       const weekRange = getWeekRange(date);
       const mealPlan = weeklyMealPlans[weekRange];
-      const hasMeals = mealPlan && mealPlan[dayOfWeek];
+      const hasMeals = mealPlan && mealPlan[dayOfWeek] && mealPlan[dayOfWeek] !== '';
       const mealNames = hasMeals 
         ? mealPlan[dayOfWeek].split(',')
           .map(id => recipes.find(r => r.id === id)?.name)
@@ -662,7 +662,9 @@ const App: React.FC = () => {
 
     const handleMealChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
       const newMeal = event.target.value;
-      if (newMeal && !selectedMeals.includes(newMeal)) {
+      if (newMeal === 'none') {
+        setSelectedMeals([]);
+      } else if (newMeal && !selectedMeals.includes(newMeal)) {
         setSelectedMeals([...selectedMeals, newMeal]);
       }
     };
@@ -672,7 +674,7 @@ const App: React.FC = () => {
     };
 
     const handleSaveMeal = async () => {
-      if (!selectedDate || selectedMeals.length === 0) return;
+      if (!selectedDate) return;
 
       try {
         await ensureAuthentication();
@@ -725,7 +727,7 @@ const App: React.FC = () => {
               onChange={handleMealChange}
               className="meal-dropdown"
             >
-              <option value="">Choose a recipe...</option>
+              <option value="none">None</option>
               {sortedRecipes.map((recipe) => (
                 <option key={recipe.id} value={recipe.id}>
                   {recipe.name}
@@ -782,7 +784,6 @@ const App: React.FC = () => {
           <button 
             className="save-button" 
             onClick={handleSaveMeal}
-            disabled={selectedMeals.length === 0}
           >
             Save Meal Plan
           </button>
