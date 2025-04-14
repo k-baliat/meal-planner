@@ -897,6 +897,7 @@ body {
   border-radius: 4px;
   font-size: 0.8rem;
   margin-bottom: 0.5rem;
+  width: 10%;
 }
 
 .meal-overview .meal-details ul {
