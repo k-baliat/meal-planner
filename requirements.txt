@@ -1,0 +1,5 @@
+python-dotenv
+dotenv
+requests
+schedule
+firebase-admin
