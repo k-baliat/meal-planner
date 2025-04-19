@@ -1,6 +1,0 @@
-python-dotenv
-dotenv
-requests
-schedule
-firebase-admin
-pytz==2024.1

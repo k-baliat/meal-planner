@@ -1,46 +1,115 @@
-# Getting Started with Create React App
+# 🍽️ K&N Meal Planner
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A personal meal planning application built with React and Firebase to help organize weekly meals, manage recipes, and create shopping lists. This project was created for personal use to streamline meal planning and grocery shopping.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+### Meal Planner
+- Weekly meal planning with a calendar interface
+- Support for multiple recipes per day
+- Cuisine-based recipe filtering
+- Real-time updates using Firebase
 
-### `npm start`
+### Recipe Library
+- Add and edit recipes with ingredients
+- Categorize recipes by cuisine type
+- Filter recipes by cuisine
+- View recipe details and ingredients
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Shopping List
+- Generate shopping lists based on weekly meal plans
+- Add miscellaneous items
+- Track checked items
+- View meal overview for selected week
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🏗️ Technical Implementation
 
-### `npm test`
+### Frontend
+- React 19 with TypeScript
+- Functional components with hooks
+- Context API for state management
+- Responsive CSS with modern layouts
+- Custom scrollbars and animations
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend
+- Firebase Authentication
+- Firebase Firestore for data storage
+- Real-time data synchronization
+- Offline support
 
-### `npm run build`
+### Data Structure
+```typescript
+interface Recipe {
+  id: string;
+  name: string;
+  cuisine: string;
+  ingredients: string[];
+}
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+interface WeeklyMealPlan {
+  [day: string]: string;  // recipe IDs
+}
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+interface ShoppingList {
+  ingredients: string[];
+  miscItems: string[];
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🛠️ Development Setup
 
-### `npm run eject`
+1. **Prerequisites**
+   ```bash
+   node >= 16.0.0
+   npm >= 7.0.0
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+2. **Installation**
+   ```bash
+   git clone [repository-url]
+   cd meal-planner-app
+   npm install
+   ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. **Environment Setup**
+   - Create `.env` file with Firebase configuration
+   - Set up Firebase project
+   - Configure authentication
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. **Development**
+   ```bash
+   npm start
+   ```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## 📱 UI/UX Features
 
-## Learn More
+- Clean, modern interface with a warm color scheme
+- Responsive design for all device sizes
+- Intuitive navigation with tab-based interface
+- Visual feedback for user actions
+- Smooth transitions and animations
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🔒 Security
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Firebase Authentication for user management
+- Secure data access rules
+- Environment variable protection
+- Input validation and sanitization
+
+## 📝 Personal Notes
+
+This application was created to solve personal meal planning challenges:
+- Organizing weekly meals
+- Managing recipe collections
+- Creating efficient shopping lists
+- Tracking meal preferences
+
+## 👨‍💻 Author
+
+Kevin Baliat - [GitHub Profile](https://github.com/kevinbaliat)
+
+## 🙏 Acknowledgments
+
+- Firebase Team for the backend services
+- React Team for the frontend framework
+- Open source community for various libraries
