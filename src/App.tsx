@@ -793,44 +793,44 @@ const App: React.FC = () => {
       <div className="meal-details">
         <h2>{formatDate(selectedDate)}</h2>
         
-        <div className="meal-selector">
-          <div className="cuisine-filter">
-            <label htmlFor="cuisine-filter">Filter by Cuisine:</label>
-            <select
-              id="cuisine-filter"
-              value={selectedCuisine}
-              onChange={(e) => setSelectedCuisine(e.target.value as Cuisine | '')}
-              className="cuisine-dropdown"
-            >
-              <option value="">All Cuisines</option>
-              {CUISINES.map((cuisine) => (
-                <option key={cuisine} value={cuisine}>
-                  {cuisine}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="recipe-selector">
-            <label htmlFor="meal-dropdown">Add Recipe:</label>
-            <select 
-              id="meal-dropdown" 
-              value="" 
-              onChange={handleMealChange}
-              className="meal-dropdown"
-            >
-              <option value="none">None</option>
-              {sortedRecipes.map((recipe) => (
-                <option key={recipe.id} value={recipe.id}>
-                  {recipe.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
         <div className="scrollable-content">
           <div className="meal-details-content">
+            <div className="meal-selector">
+              <div className="cuisine-filter">
+                <label htmlFor="cuisine-filter">Filter by Cuisine:</label>
+                <select
+                  id="cuisine-filter"
+                  value={selectedCuisine}
+                  onChange={(e) => setSelectedCuisine(e.target.value as Cuisine | '')}
+                  className="cuisine-dropdown"
+                >
+                  <option value="">All Cuisines</option>
+                  {CUISINES.map((cuisine) => (
+                    <option key={cuisine} value={cuisine}>
+                      {cuisine}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="recipe-selector">
+                <label htmlFor="meal-dropdown">Add Recipe:</label>
+                <select 
+                  id="meal-dropdown" 
+                  value="" 
+                  onChange={handleMealChange}
+                  className="meal-dropdown"
+                >
+                  <option value="none">None</option>
+                  {sortedRecipes.map((recipe) => (
+                    <option key={recipe.id} value={recipe.id}>
+                      {recipe.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="selected-meals-section">
               <div 
                 className="selected-meals-header"

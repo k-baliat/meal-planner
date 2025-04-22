@@ -143,33 +143,29 @@ body {
 
 .meal-details h2 {
   margin: 0 0 1rem 0;
+  padding: 0 1rem;
 }
 
 .meal-selector {
-  margin-bottom: 1rem;
-}
-
-.selected-meals {
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
 }
 
 .scrollable-content {
   flex: 1;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-right: 0.5rem;
+  padding: 0 1rem;
 }
 
 .meal-details-content {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background-color: white;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding-bottom: 1rem;
 }
 
 .ingredients-list {
@@ -817,43 +813,29 @@ body {
   color: var(--primary-color);
 }
 
-.cuisine-filter {
-  margin-bottom: 1rem;
-}
-
-.cuisine-dropdown {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-top: 0.5rem;
-  background-color: white;
-}
-
-.recipe-selector {
-  margin-top: 1rem;
-}
-
-.meal-selector {
+.cuisine-filter, .recipe-selector {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: var(--secondary-color);
-  border-radius: 8px;
+  gap: 0.5rem;
 }
 
-/* Update existing styles to accommodate new layout */
-.recipe-input {
+.cuisine-filter label, .recipe-selector label {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.cuisine-dropdown, .meal-dropdown {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 1rem;
-  margin-top: 0.5rem;
   background-color: white;
+}
+
+.cuisine-dropdown:focus, .meal-dropdown:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 /* Add styles for the selected recipe display */
