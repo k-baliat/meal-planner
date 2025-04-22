@@ -712,6 +712,7 @@ const App: React.FC = () => {
     const [noteContent, setNoteContent] = useState<string>('');
     const [isNotesExpanded, setIsNotesExpanded] = useState<boolean>(false);
     const [isIngredientsExpanded, setIsIngredientsExpanded] = useState<boolean>(false);
+    const [isSelectedMealsExpanded, setIsSelectedMealsExpanded] = useState<boolean>(false);
 
     // Load pre-selected meals and note when date changes
     useEffect(() => {
@@ -828,28 +829,40 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {selectedMeals.length > 0 && (
-          <div className="selected-meals">
-            <h3>Selected Meals:</h3>
-            {selectedMeals.map(mealId => {
-              const recipe = recipes.find(r => r.id === mealId);
-              return (
-                <div key={mealId} className="selected-meal">
-                  <span>{recipe?.name}</span>
-                  <button 
-                    className="remove-meal-button"
-                    onClick={() => handleRemoveMeal(mealId)}
-                  >
-                    ×
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
         <div className="scrollable-content">
           <div className="meal-details-content">
+            <div className="selected-meals-section">
+              <div 
+                className="selected-meals-header"
+                onClick={() => setIsSelectedMealsExpanded(!isSelectedMealsExpanded)}
+              >
+                <h3>Selected Meals</h3>
+                <button className="toggle-selected-meals-button">
+                  {isSelectedMealsExpanded ? '−' : '+'}
+                </button>
+              </div>
+              <div className={`selected-meals-content ${isSelectedMealsExpanded ? 'expanded' : ''}`}>
+                {selectedMeals.length > 0 ? (
+                  selectedMeals.map(mealId => {
+                    const recipe = recipes.find(r => r.id === mealId);
+                    return (
+                      <div key={mealId} className="selected-meal">
+                        <span>{recipe?.name}</span>
+                        <button 
+                          className="remove-meal-button"
+                          onClick={() => handleRemoveMeal(mealId)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p>No meals selected</p>
+                )}
+              </div>
+            </div>
+
             <div className="ingredients-section">
               <div 
                 className="ingredients-header"

@@ -1129,3 +1129,77 @@ body {
   color: var(--text-color);
   font-style: italic;
 }
+
+.selected-meals-section {
+  margin: 0;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+}
+
+.selected-meals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.selected-meals-header:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.selected-meals-header h3 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.selected-meals-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.selected-meals-content.expanded {
+  max-height: 300px;
+  margin-top: 1rem;
+}
+
+.toggle-selected-meals-button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.25rem;
+  transition: transform 0.2s;
+}
+
+.toggle-selected-meals-button:hover {
+  transform: scale(1.1);
+}
+
+.selected-meal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.remove-meal-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+}
+
+.remove-meal-button:hover {
+  color: #c82333;
+}
