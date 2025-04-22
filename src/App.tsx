@@ -60,6 +60,16 @@ interface ShoppingList {
   [key: string]: ShoppingListItem;  // ingredient: ShoppingListItem
 }
 
+interface Note {
+  id?: string;
+  date: string;
+  content: string;
+}
+
+interface Notes {
+  [key: string]: Note;  // date: Note
+}
+
 // Define available cuisines as a constant
 const CUISINES = [
   'American',
@@ -111,6 +121,10 @@ const App: React.FC = () => {
   
   // Weekly meal plans state
   const [weeklyMealPlans, setWeeklyMealPlans] = useState<WeeklyMealPlans>({});
+  
+  // Notes state
+  const [notes, setNotes] = useState<Notes>({});
+  const [newNote, setNewNote] = useState<string>('');
   
   //===========================================================================
   // FIREBASE INTEGRATION
@@ -206,6 +220,31 @@ const App: React.FC = () => {
     loadWeeklyMealPlans();
   }, []);
 
+  // Load notes from Firestore
+  useEffect(() => {
+    const loadNotes = async () => {
+      try {
+        await ensureAuthentication();
+        
+        const notesRef = collection(db, collections.notes);
+        const unsubscribe = onSnapshot(notesRef, (snapshot: { docs: QueryDocumentSnapshot[] }) => {
+          const notesData: Notes = {};
+          snapshot.docs.forEach((doc: QueryDocumentSnapshot) => {
+            const note = doc.data() as Note;
+            notesData[note.date] = { ...note, id: doc.id };
+          });
+          setNotes(notesData);
+        });
+
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error loading notes:', error);
+      }
+    };
+
+    loadNotes();
+  }, []);
+
   /**
    * Save Recipe to Firestore
    * 
@@ -267,6 +306,39 @@ const App: React.FC = () => {
       console.log('Shopping list updated for week:', weekRange);
     } catch (error) {
       console.error('Error updating shopping list:', error);
+      throw error;
+    }
+  };
+
+  /**
+   * Save Note to Firestore
+   * 
+   * This function saves a note for a specific date to Firestore.
+   * 
+   * @param date - The date string
+   * @param content - The note content
+   */
+  const saveNoteToFirestore = async (date: string, content: string) => {
+    try {
+      await ensureAuthentication();
+      
+      const note: Omit<Note, 'id'> = {
+        date,
+        content
+      };
+
+      // Check if note exists for this date
+      const existingNote = notes[date];
+      if (existingNote && existingNote.id) {
+        // Update existing note
+        const noteRef = doc(db, collections.notes, existingNote.id);
+        await updateDoc(noteRef, { content });
+      } else {
+        // Create new note
+        await addDoc(collection(db, collections.notes), note);
+      }
+    } catch (error) {
+      console.error('Error saving note:', error);
       throw error;
     }
   };
@@ -637,8 +709,10 @@ const App: React.FC = () => {
   const MealDetails = () => {
     const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
     const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | ''>('');
+    const [noteContent, setNoteContent] = useState<string>('');
+    const [isNotesExpanded, setIsNotesExpanded] = useState<boolean>(false);
 
-    // Load pre-selected meals when date changes
+    // Load pre-selected meals and note when date changes
     useEffect(() => {
       if (selectedDate) {
         const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
@@ -649,8 +723,13 @@ const App: React.FC = () => {
         } else {
           setSelectedMeals([]);
         }
+
+        // Load note for selected date
+        const dateString = selectedDate.toISOString().split('T')[0];
+        const note = notes[dateString];
+        setNoteContent(note?.content || '');
       }
-    }, [selectedDate, weeklyMealPlans]);
+    }, [selectedDate, weeklyMealPlans, notes]);
 
     // Filter recipes by selected cuisine
     const filteredRecipes = selectedCuisine
@@ -694,6 +773,17 @@ const App: React.FC = () => {
         setSelectedMeals([]);
       } catch (error) {
         console.error('Error saving meal plan:', error);
+      }
+    };
+
+    const handleSaveNote = async () => {
+      if (!selectedDate) return;
+
+      try {
+        const dateString = selectedDate.toISOString().split('T')[0];
+        await saveNoteToFirestore(dateString, noteContent);
+      } catch (error) {
+        console.error('Error saving note:', error);
       }
     };
 
@@ -757,36 +847,65 @@ const App: React.FC = () => {
           </div>
         )}
 
-        <div className="ingredients-list">
-          <h3>Ingredients:</h3>
-          {selectedMeals.length > 0 ? (
-            <ul>
-              {selectedMeals.map(mealId => {
-                const recipe = recipes.find(r => r.id === mealId);
-                return (
-                  <li key={mealId} className="recipe-ingredients">
-                    <h4>{recipe?.name}</h4>
-                    <ul>
-                      {recipe?.ingredients.map((ingredient, index) => (
-                        <li key={index}>{ingredient}</li>
-                      ))}
-                    </ul>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p>Select recipes to view ingredients</p>
-          )}
-        </div>
-        
-        <div className="save-section">
-          <button 
-            className="save-button" 
-            onClick={handleSaveMeal}
-          >
-            Save Meal Plan
-          </button>
+        <div className="scrollable-content">
+          <div className="ingredients-list">
+            <h3>Ingredients:</h3>
+            {selectedMeals.length > 0 ? (
+              <ul>
+                {selectedMeals.map(mealId => {
+                  const recipe = recipes.find(r => r.id === mealId);
+                  return (
+                    <li key={mealId} className="recipe-ingredients">
+                      <h4>{recipe?.name}</h4>
+                      <ul>
+                        {recipe?.ingredients.map((ingredient, index) => (
+                          <li key={index}>{ingredient}</li>
+                        ))}
+                      </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p>Select recipes to view ingredients</p>
+            )}
+          </div>
+          
+          <div className="notes-section">
+            <div 
+              className="notes-header"
+              onClick={() => setIsNotesExpanded(!isNotesExpanded)}
+            >
+              <h3>Notes</h3>
+              <button className="toggle-notes-button">
+                {isNotesExpanded ? '−' : '+'}
+              </button>
+            </div>
+            <div className={`notes-content ${isNotesExpanded ? 'expanded' : ''}`}>
+              <textarea
+                value={noteContent}
+                onChange={(e) => setNoteContent(e.target.value)}
+                placeholder="Add notes for this day..."
+                className="notes-textarea"
+              />
+              <button 
+                className="save-note-button"
+                onClick={handleSaveNote}
+                disabled={!noteContent.trim()}
+              >
+                Save Note
+              </button>
+            </div>
+          </div>
+          
+          <div className="save-section">
+            <button 
+              className="save-button" 
+              onClick={handleSaveMeal}
+            >
+              Save Meal Plan
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -1368,6 +1487,12 @@ const App: React.FC = () => {
                 {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
                   const mealPlan = weeklyMealPlans[selectedWeek];
                   const mealIds = mealPlan?.[day]?.split(',') || [];
+                  const date = new Date(selectedWeek.split(' - ')[0]);
+                  const dayIndex = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].indexOf(day);
+                  date.setDate(date.getDate() + dayIndex);
+                  const dateString = date.toISOString().split('T')[0];
+                  const note = notes[dateString];
+
                   return (
                     <div key={day} className="day-meals">
                       <h3>{day}</h3>
@@ -1385,6 +1510,12 @@ const App: React.FC = () => {
                           </div>
                         ) : null;
                       })}
+                      {note && (
+                        <div className="day-note">
+                          <h4>Notes</h4>
+                          <p>{note.content}</p>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

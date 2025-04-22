@@ -28,7 +28,8 @@ export const db = getFirestore(app);
 export const collections = {
   recipes: 'recipes',
   mealPlans: 'mealPlans',
-  shoppingLists: 'shoppingLists'
+  shoppingLists: 'shoppingLists',
+  notes: 'notes'
 };
 
 // Authentication state management
