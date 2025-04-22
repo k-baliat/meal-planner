@@ -711,6 +711,7 @@ const App: React.FC = () => {
     const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | ''>('');
     const [noteContent, setNoteContent] = useState<string>('');
     const [isNotesExpanded, setIsNotesExpanded] = useState<boolean>(false);
+    const [isIngredientsExpanded, setIsIngredientsExpanded] = useState<boolean>(false);
 
     // Load pre-selected meals and note when date changes
     useEffect(() => {
@@ -849,27 +850,37 @@ const App: React.FC = () => {
 
         <div className="scrollable-content">
           <div className="meal-details-content">
-            <div className="ingredients-list">
-              <h3>Ingredients:</h3>
-              {selectedMeals.length > 0 ? (
-                <ul>
-                  {selectedMeals.map(mealId => {
-                    const recipe = recipes.find(r => r.id === mealId);
-                    return (
-                      <li key={mealId} className="recipe-ingredients">
-                        <h4>{recipe?.name}</h4>
-                        <ul>
-                          {recipe?.ingredients.map((ingredient, index) => (
-                            <li key={index}>{ingredient}</li>
-                          ))}
-                        </ul>
-                      </li>
-                    );
-                  })}
-                </ul>
-              ) : (
-                <p>Select recipes to view ingredients</p>
-              )}
+            <div className="ingredients-section">
+              <div 
+                className="ingredients-header"
+                onClick={() => setIsIngredientsExpanded(!isIngredientsExpanded)}
+              >
+                <h3>Ingredients</h3>
+                <button className="toggle-ingredients-button">
+                  {isIngredientsExpanded ? '−' : '+'}
+                </button>
+              </div>
+              <div className={`ingredients-content ${isIngredientsExpanded ? 'expanded' : ''}`}>
+                {selectedMeals.length > 0 ? (
+                  <ul>
+                    {selectedMeals.map(mealId => {
+                      const recipe = recipes.find(r => r.id === mealId);
+                      return (
+                        <li key={mealId} className="recipe-ingredients">
+                          <h4>{recipe?.name}</h4>
+                          <ul>
+                            {recipe?.ingredients.map((ingredient, index) => (
+                              <li key={index}>{ingredient}</li>
+                            ))}
+                          </ul>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p>Select recipes to view ingredients</p>
+                )}
+              </div>
             </div>
             
             <div className="notes-section">
