@@ -162,6 +162,16 @@ body {
   padding-right: 0.5rem;
 }
 
+.meal-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .ingredients-list {
   flex: 1;
   overflow-y: auto;
@@ -223,6 +233,7 @@ body {
 .save-section {
   margin-top: auto;
   padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
 }
 
 /* Custom scrollbar for scrollable content */

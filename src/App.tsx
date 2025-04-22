@@ -848,63 +848,65 @@ const App: React.FC = () => {
         )}
 
         <div className="scrollable-content">
-          <div className="ingredients-list">
-            <h3>Ingredients:</h3>
-            {selectedMeals.length > 0 ? (
-              <ul>
-                {selectedMeals.map(mealId => {
-                  const recipe = recipes.find(r => r.id === mealId);
-                  return (
-                    <li key={mealId} className="recipe-ingredients">
-                      <h4>{recipe?.name}</h4>
-                      <ul>
-                        {recipe?.ingredients.map((ingredient, index) => (
-                          <li key={index}>{ingredient}</li>
-                        ))}
-                      </ul>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p>Select recipes to view ingredients</p>
-            )}
-          </div>
-          
-          <div className="notes-section">
-            <div 
-              className="notes-header"
-              onClick={() => setIsNotesExpanded(!isNotesExpanded)}
-            >
-              <h3>Notes</h3>
-              <button className="toggle-notes-button">
-                {isNotesExpanded ? '−' : '+'}
-              </button>
+          <div className="meal-details-content">
+            <div className="ingredients-list">
+              <h3>Ingredients:</h3>
+              {selectedMeals.length > 0 ? (
+                <ul>
+                  {selectedMeals.map(mealId => {
+                    const recipe = recipes.find(r => r.id === mealId);
+                    return (
+                      <li key={mealId} className="recipe-ingredients">
+                        <h4>{recipe?.name}</h4>
+                        <ul>
+                          {recipe?.ingredients.map((ingredient, index) => (
+                            <li key={index}>{ingredient}</li>
+                          ))}
+                        </ul>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p>Select recipes to view ingredients</p>
+              )}
             </div>
-            <div className={`notes-content ${isNotesExpanded ? 'expanded' : ''}`}>
-              <textarea
-                value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
-                placeholder="Add notes for this day..."
-                className="notes-textarea"
-              />
-              <button 
-                className="save-note-button"
-                onClick={handleSaveNote}
-                disabled={!noteContent.trim()}
+            
+            <div className="notes-section">
+              <div 
+                className="notes-header"
+                onClick={() => setIsNotesExpanded(!isNotesExpanded)}
               >
-                Save Note
+                <h3>Notes</h3>
+                <button className="toggle-notes-button">
+                  {isNotesExpanded ? '−' : '+'}
+                </button>
+              </div>
+              <div className={`notes-content ${isNotesExpanded ? 'expanded' : ''}`}>
+                <textarea
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                  placeholder="Add notes for this day..."
+                  className="notes-textarea"
+                />
+                <button 
+                  className="save-note-button"
+                  onClick={handleSaveNote}
+                  disabled={!noteContent.trim()}
+                >
+                  Save Note
+                </button>
+              </div>
+            </div>
+            
+            <div className="save-section">
+              <button 
+                className="save-button" 
+                onClick={handleSaveMeal}
+              >
+                Save Meal Plan
               </button>
             </div>
-          </div>
-          
-          <div className="save-section">
-            <button 
-              className="save-button" 
-              onClick={handleSaveMeal}
-            >
-              Save Meal Plan
-            </button>
           </div>
         </div>
       </div>
