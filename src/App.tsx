@@ -626,10 +626,27 @@ const App: React.FC = () => {
    * and allows the user to select a date.
    */
   const Calendar = () => {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
+    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    const handlePreviousMonth = () => {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(prev => prev - 1);
+      } else {
+        setCurrentMonth(prev => prev - 1);
+      }
+    };
+
+    const handleNextMonth = () => {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(prev => prev + 1);
+      } else {
+        setCurrentMonth(prev => prev + 1);
+      }
+    };
 
     const getDaysInMonth = (year: number, month: number) => {
       return new Date(year, month + 1, 0).getDate();
@@ -649,9 +666,9 @@ const App: React.FC = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
-      const isCurrentDay = day === currentDate.getDate() && 
-                          currentMonth === currentDate.getMonth() && 
-                          currentYear === currentDate.getFullYear();
+      const isCurrentDay = day === new Date().getDate() && 
+                          currentMonth === new Date().getMonth() && 
+                          currentYear === new Date().getFullYear();
       const isSelected = day === selectedDate.getDate() && 
                         currentMonth === selectedDate.getMonth() && 
                         currentYear === selectedDate.getFullYear();
@@ -688,7 +705,21 @@ const App: React.FC = () => {
     return (
       <div className="calendar">
         <div className="calendar-header">
+          <button 
+            className="month-nav-button"
+            onClick={handlePreviousMonth}
+            aria-label="Previous month"
+          >
+            &lt;
+          </button>
           <h2>{new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h2>
+          <button 
+            className="month-nav-button"
+            onClick={handleNextMonth}
+            aria-label="Next month"
+          >
+            &gt;
+          </button>
         </div>
         <div className="calendar-days-header">
           {dayNames.map(day => <div key={day} className="day-name">{day}</div>)}

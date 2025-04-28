@@ -260,8 +260,31 @@ body {
 }
 
 .calendar-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
+}
+
+.month-nav-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  color: #333;
+  transition: color 0.2s ease;
+  border-radius: 4px;
+}
+
+.month-nav-button:hover {
+  color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.month-nav-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .calendar-days-header {
