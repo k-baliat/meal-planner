@@ -533,14 +533,25 @@ const App: React.FC = () => {
    * 
    * @param ingredient - The ingredient string to toggle
    */
-  const handleToggleCheckedItem = (ingredient: string) => {
-    const newCheckedItems = new Set(checkedItems);
-    if (newCheckedItems.has(ingredient)) {
-      newCheckedItems.delete(ingredient);
-    } else {
-      newCheckedItems.add(ingredient);
-    }
-    setCheckedItems(newCheckedItems);
+  const handleToggleCheckedItem = async (item: string) => {
+    // Update local state immediately for responsive UI
+    setCheckedItems(prev => {
+      const newChecked = new Set(prev);
+      if (newChecked.has(item)) {
+        newChecked.delete(item);
+      } else {
+        newChecked.add(item);
+      }
+      // Save to Firestore in the background
+      if (selectedWeek) {
+        const shoppingListRef = doc(db, collections.shoppingLists, selectedWeek);
+        setDoc(shoppingListRef, {
+          checkedItems: Array.from(newChecked),
+          weekRange: selectedWeek
+        }, { merge: true });
+      }
+      return newChecked;
+    });
   };
 
   /**
@@ -1323,13 +1334,16 @@ const App: React.FC = () => {
     const [miscItem, setMiscItem] = useState('');
     const [miscItems, setMiscItems] = useState<string[]>([]);
     const [viewMode, setViewMode] = useState<'shopping' | 'overview'>('shopping');
+    // Add checkedItems state for this component
+    const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
 
-    // Load ingredients and misc items when week selection changes
+    // Load ingredients, misc items, and checked items when week selection changes
     useEffect(() => {
       const loadItems = async () => {
         if (!selectedWeek) {
           setIngredients([]);
           setMiscItems([]);
+          setCheckedItems(new Set());
           return;
         }
 
@@ -1338,20 +1352,24 @@ const App: React.FC = () => {
           const aggregatedIngredients = await getAggregatedIngredients();
           setIngredients(aggregatedIngredients);
           
-          // Load misc items from Firestore for the selected week
+          // Load misc items and checked items from Firestore for the selected week
           const shoppingListRef = doc(db, collections.shoppingLists, selectedWeek);
           const shoppingListDoc = await getDoc(shoppingListRef);
           
           if (shoppingListDoc.exists()) {
             const data = shoppingListDoc.data();
             setMiscItems(data.miscItems || []);
+            // Load checkedItems from Firestore, default to [] if not present
+            setCheckedItems(new Set(data.checkedItems || []));
           } else {
             setMiscItems([]);
+            setCheckedItems(new Set());
           }
         } catch (error) {
           console.error('Error loading items:', error);
           setIngredients([]);
           setMiscItems([]);
+          setCheckedItems(new Set());
         } finally {
           setLoading(false);
         }
@@ -1359,6 +1377,28 @@ const App: React.FC = () => {
 
       loadItems();
     }, [selectedWeek]);
+
+    // Handler for toggling checked state of an item
+    const handleToggleCheckedItem = async (item: string) => {
+      // Update local state immediately for responsive UI
+      setCheckedItems(prev => {
+        const newChecked = new Set(prev);
+        if (newChecked.has(item)) {
+          newChecked.delete(item);
+        } else {
+          newChecked.add(item);
+        }
+        // Save to Firestore in the background
+        if (selectedWeek) {
+          const shoppingListRef = doc(db, collections.shoppingLists, selectedWeek);
+          setDoc(shoppingListRef, {
+            checkedItems: Array.from(newChecked),
+            weekRange: selectedWeek
+          }, { merge: true });
+        }
+        return newChecked;
+      });
+    };
 
     const handleAddMiscItem = async () => {
       if (!miscItem.trim() || !selectedWeek) return;
