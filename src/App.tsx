@@ -26,6 +26,9 @@ import {
 // In React, we can import CSS directly into components
 import './App.css';
 
+// Import the Chatbot component
+import Chatbot from './Chatbot';
+
 /**
  * Define TypeScript interfaces for our data structures
  * 
@@ -100,6 +103,23 @@ const App: React.FC = () => {
   
   // Tab state
   const [activeTab, setActiveTab] = useState<'mealPlanner' | 'recipeLibrary' | 'shoppingList'>('mealPlanner');
+  
+  // Chatbot state
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  
+  // State to store recipe data from chatbot
+  const [pendingRecipeFromChatbot, setPendingRecipeFromChatbot] = useState<Omit<Recipe, 'id'> | null>(null);
+  
+  // Effect to handle pending recipe from chatbot - must be at App level to work regardless of current tab
+  useEffect(() => {
+    if (pendingRecipeFromChatbot) {
+      console.log('App: Switching to recipeLibrary tab for pending recipe');
+      // Switch to recipe library tab first
+      setActiveTab('recipeLibrary');
+      // The RecipeLibrary component's useEffect will handle the form pre-filling
+      // It watches both pendingRecipeFromChatbot and activeTab, so it will run after the tab switches
+    }
+  }, [pendingRecipeFromChatbot]);
   
   // Date and meal selection state
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -1000,6 +1020,26 @@ const App: React.FC = () => {
     const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
     const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | ''>('');
 
+    // Handle pending recipe from chatbot
+    // This effect runs when the component mounts or when pendingRecipeFromChatbot changes
+    // It pre-fills the form with recipe data from the chatbot
+    // We check both pendingRecipeFromChatbot and activeTab to ensure we're on the right tab
+    useEffect(() => {
+      // Only process if we're on the recipe library tab (component is mounted) and there's a pending recipe
+      if (pendingRecipeFromChatbot && activeTab === 'recipeLibrary') {
+        console.log('RecipeLibrary: Pre-filling recipe form with:', pendingRecipeFromChatbot);
+        
+        // Pre-fill the form with recipe data
+        setLocalRecipeName(pendingRecipeFromChatbot.name);
+        setLocalCuisine(pendingRecipeFromChatbot.cuisine as Cuisine);
+        setLocalIngredients(pendingRecipeFromChatbot.ingredients);
+        setIsAddingRecipe(true);
+        
+        // Clear the pending recipe after using it
+        setPendingRecipeFromChatbot(null);
+      }
+    }, [pendingRecipeFromChatbot, activeTab]);
+
     // Reset local state when toggling add recipe form
     useEffect(() => {
       if (!isAddingRecipe && !editingRecipe) {
@@ -1148,7 +1188,16 @@ const App: React.FC = () => {
 
     return (
       <div className="recipe-library">
-        <h2>Recipe Library</h2>
+        <div className="recipe-library-header">
+          <h2>Recipe Library</h2>
+          <button 
+            className="chatbot-toggle-button"
+            onClick={() => setIsChatbotOpen(true)}
+            aria-label="Open chatbot"
+          >
+            👨‍🍳 Chat with Chef Coco
+          </button>
+        </div>
         
         <div className="recipe-filters">
           <div className="cuisine-filter">
@@ -1713,6 +1762,17 @@ const App: React.FC = () => {
           <ShoppingList />
         )}
       </div>
+      
+      {/* Chatbot Component */}
+      <Chatbot 
+        isOpen={isChatbotOpen} 
+        onClose={() => setIsChatbotOpen(false)}
+        onSaveRecipe={async (recipe) => {
+          // Save directly to Firebase
+          await saveRecipeToFirestore(recipe);
+        }}
+        existingRecipes={recipes}
+      />
     </div>
   );
 }
