@@ -36,3 +36,10 @@ yarn-error.log*
 *.swo
 .venv
 FirebaseConfig.json
+
+# Firebase Service Account Keys (NEVER commit these!)
+service-account-key.json
+*-firebase-adminsdk-*.json
+**/credentials/*.json
+scripts/credentials/
+~/.firebase-credentials/

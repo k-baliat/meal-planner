@@ -1,0 +1,2272 @@
+{
+  "backupId": "backup_2025-12-28_1766882823908",
+  "timestamp": "2025-12-28T00:47:03.908Z",
+  "userId": "cyRI1P4oJYRNFmxeWFyBjXLTLW83",
+  "collections": {
+    "recipes": {
+      "0NypcESiGibqRxNnwZDA": {
+        "name": "Carnitas",
+        "cuisine": "Mexican",
+        "ingredients": [
+          "pork butt",
+          "lard or ghee or oil",
+          "white onion",
+          "garlic",
+          "Pepsi or coke",
+          "bay leaves",
+          "oregano",
+          "orange",
+          "tortillas (optional)"
+        ]
+      },
+      "0ZgyYhE78lGNYhwWCKjy": {
+        "name": "Fried Rice",
+        "ingredients": [
+          "rice",
+          "green onion",
+          "egg",
+          "broccoli",
+          "carrot",
+          "soy sauce",
+          "rice vinegar",
+          "sesame oil",
+          "sugar",
+          "sesame seeds (optional)",
+          "seaweed (optional)",
+          "shrimp or spam"
+        ],
+        "cuisine": "Asian"
+      },
+      "1DLTXGsFO7MUVEGXb6wE": {
+        "name": "test new",
+        "cuisine": "Misc",
+        "ingredients": [
+          "water"
+        ],
+        "notes": "testing",
+        "userId": "cyRI1P4oJYRNFmxeWFyBjXLTLW83",
+        "tags": [
+          "quick",
+          "simple"
+        ],
+        "createdAt": {
+          "_seconds": 1766870930,
+          "_nanoseconds": 606000000
+        },
+        "updatedAt": {
+          "_seconds": 1766870930,
+          "_nanoseconds": 606000000
+        }
+      },
+      "2TNELa1NL79A0DkMCF7R": {
+        "name": "Colombian lentils",
+        "cuisine": "Colombian",
+        "ingredients": [
+          "Lentils",
+          "Pork (chicharron or chunks)",
+          "Green onion",
+          "Tomato",
+          "Garlic",
+          "Carrot",
+          "Potato",
+          "Red onion",
+          "Hot dog (optional)",
+          "Cilantro",
+          "Rice",
+          "Served with plantains (optional)",
+          "Served with egg (optional)"
+        ]
+      },
+      "34qVxbW3TTLc3EW9Q3xZ": {
+        "name": "Creamy Mushrooms",
+        "cuisine": "Misc",
+        "ingredients": [
+          "mushrooms",
+          "cream",
+          "onion"
+        ]
+      },
+      "3WyRX3u5F7oNpH0YJkBt": {
+        "name": "Italian Chopped Sandwich",
+        "ingredients": [
+          "bread",
+          "turkey deli meat",
+          "pepperoni",
+          "iceberg lettuce",
+          "tomato",
+          "onion",
+          "pepperochini",
+          "pickles",
+          "mayonnaise",
+          "red wine vinegar",
+          "oil"
+        ],
+        "cuisine": "Italian"
+      },
+      "3ZztT8SgWbKGYcx2jA4J": {
+        "name": "Ugali + Veggie + Protein",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "Maize flour",
+          "Choice of protein (Chicken/Beef/Fish)",
+          "Choice of Veggie (Collard greens/Spinach)",
+          "Tomatoes",
+          "Cilantro",
+          "Onion",
+          "Tomato paste"
+        ]
+      },
+      "4GUmHssAkwawrffrCCIV": {
+        "name": "Salmon Rice Bowl (Emily Mariko's)",
+        "cuisine": "Asian",
+        "ingredients": [
+          "salmon",
+          "rice",
+          "avocado",
+          "kewpie mayo",
+          "seaweed sheets"
+        ]
+      },
+      "4Rh26RhBb9tYQytDe44a": {
+        "name": "Asian Salad (Joyce’s Mom)",
+        "cuisine": "Asian",
+        "ingredients": [
+          "iceberg lettuce",
+          "green onion",
+          "wonton wrapper",
+          "sesame seeds",
+          "shredded chicken",
+          "vegetable oil",
+          "sesame oil",
+          "sugar",
+          "rice vinegar",
+          "cucumber"
+        ]
+      },
+      "4dmIS3TFRTM2lPmOHFs2": {
+        "name": "Hawaiian Shrimp",
+        "ingredients": [
+          "shrimp",
+          "garlic",
+          "butter",
+          "flour",
+          "rice"
+        ],
+        "cuisine": "Hawaiian"
+      },
+      "4hDzNQzzYawgy7dEg9er": {
+        "name": "Scampi Pasta",
+        "ingredients": [
+          "pasta",
+          "onion",
+          "garlic",
+          "red pepper flakes",
+          "Shrimp or salmon",
+          "Vegetable (optional)",
+          "cilantro (optional)",
+          "lemon/lime"
+        ],
+        "cuisine": "Italian"
+      },
+      "4nsIXcbqPkSIBi0T4OrI": {
+        "name": "Shredded Chicken (Crockpot)",
+        "cuisine": "American",
+        "ingredients": [
+          "chicken",
+          "onion",
+          "garlic"
+        ]
+      },
+      "5xxOO00K78hvRTShVN1t": {
+        "name": "Ceviche",
+        "ingredients": [
+          "imitation crab",
+          "cilantro",
+          "onion",
+          "jalapeño",
+          "cucumber",
+          "tomato (optional)",
+          "lime",
+          "tostadas",
+          "mayonnaise (optional)"
+        ],
+        "cuisine": "Mexican"
+      },
+      "7J2G93tscn9wCSES7ZNp": {
+        "name": "Lasagna Soup",
+        "ingredients": [
+          "lasagna pasta",
+          "cream",
+          "marinara pasta sauce",
+          "onion",
+          "tomato paste",
+          "chicken broth",
+          "garlic",
+          "ground beef",
+          "ricotta cheese (optional)"
+        ],
+        "cuisine": "Italian"
+      },
+      "8qoqiWvZnLeruK7GKZUN": {
+        "name": "Rice + Lentils",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "rice",
+          "lentils",
+          "coconut milk",
+          "onions",
+          "tomatoes (optional)",
+          "tomato paste"
+        ]
+      },
+      "9NqznP2LCwZbNf6aBc0I": {
+        "name": "Macaroni Pasta Salad",
+        "ingredients": [
+          "elbow pasta",
+          "mayonnaise",
+          "sugar",
+          "carrot",
+          "vinegar (red or apple)",
+          "milk"
+        ],
+        "cuisine": "Hawaiian"
+      },
+      "AJp9sauWUGev6GmhU8K8": {
+        "name": "Spanish Rice",
+        "ingredients": [
+          "rice",
+          "tomato sauce"
+        ],
+        "cuisine": "Mexican"
+      },
+      "BFZdjkZ5SiluSJuIoJJU": {
+        "name": "Shrimp Lemon Caper Pasta",
+        "ingredients": [
+          "shrimp",
+          "capers",
+          "lemon/lime",
+          "onion",
+          "cream (optional)",
+          "cilantro (optional)"
+        ],
+        "cuisine": "Italian"
+      },
+      "CCxvEr1BsErMihnT4yxA": {
+        "name": "Italian Breaded Chicken",
+        "ingredients": [
+          "chicken",
+          "egg",
+          "breadcrumbs",
+          "italian dressing"
+        ],
+        "cuisine": "Italian"
+      },
+      "D982Fhc0T0gBsmeYhonv": {
+        "name": "Kenyan Pilau",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "500g beef or goat, cubed",
+          "2 cups basmati rice, rinsed",
+          "1 large onion, finely chopped",
+          "3 cloves garlic, minced",
+          "1-inch ginger, grated",
+          "2 tomatoes, pureed (optional)",
+          "2 tbsp pilau masala spice mix",
+          "1 tsp whole black peppercorns",
+          "4-5 whole cloves",
+          "2 bay leaves",
+          "1 cinnamon stick",
+          "3 cups beef broth or water",
+          "3 tbsp cooking oil",
+          "Salt to taste"
+        ]
+      },
+      "FMgVfc6X5H1nhMG54qXR": {
+        "name": "Vodka Pasta",
+        "ingredients": [
+          "pasta",
+          "tomato paste",
+          "cream",
+          "red chili flakes",
+          "onion",
+          "garlic"
+        ],
+        "cuisine": "Italian"
+      },
+      "H1bwoHyRvXJ76EGqBoHw": {
+        "userId": "cyRI1P4oJYRNFmxeWFyBjXLTLW83",
+        "tags": [
+          "dairy",
+          "spicy"
+        ],
+        "createdAt": {
+          "_seconds": 1766869562,
+          "_nanoseconds": 94000000
+        },
+        "notes": "tester",
+        "name": "Pan-Seared Steak and Oven Frites 333",
+        "cuisine": "American",
+        "ingredients": [
+          "1 (10-12 oz) Sirloin or Ribeye steak, about 1-inch thick",
+          "1 tbsp olive oil (for steak)",
+          "Salt, to taste",
+          "Freshly ground black pepper, to taste",
+          "1 tbsp unsalted butter",
+          "1 clove garlic, smashed",
+          "1 sprig fresh rosemary or thyme",
+          "2 large Russet potatoes",
+          "2 tbsp olive oil (for frites)",
+          "1/2 tsp salt (for frites)",
+          "1/4 tsp black pepper (for frites)",
+          "Pinch of paprika",
+          "mistery meat",
+          "Paper Towel"
+        ],
+        "updatedAt": {
+          "_seconds": 1766879751,
+          "_nanoseconds": 940000000
+        }
+      },
+      "HCi5tYSS66kA1gwFL9tr": {
+        "name": "Carne Desmechada",
+        "cuisine": "Colombian",
+        "ingredients": [
+          "chuck roast",
+          "onion",
+          "tomato",
+          "green onion",
+          "garlic",
+          "cumin",
+          "avocado (optional)"
+        ]
+      },
+      "Hl348pXR9sKfPxi4bKlK": {
+        "name": "Soy Salmon",
+        "ingredients": [
+          "salmon",
+          "soy sauce",
+          "sugar",
+          "sriracha",
+          "rice vinegar",
+          "chili sauce"
+        ],
+        "cuisine": "Asian"
+      },
+      "MvjJXYn6el87dXhtpzMk": {
+        "name": "Breakfast Sandwich",
+        "ingredients": [
+          "bread",
+          "egg",
+          "bologna",
+          "sliced cheese",
+          "lettuce",
+          "mayonnaise",
+          "avocado (optional)"
+        ],
+        "cuisine": "American"
+      },
+      "No8BUQyXxdNu4g8vM0Fw": {
+        "name": "Taco Bowl with Spanish rice",
+        "ingredients": [
+          "rice",
+          "tomato sauce",
+          "ground beef",
+          "taco seasoning",
+          "vegetable"
+        ],
+        "cuisine": "American"
+      },
+      "OHF3HVO62HC5etIbsX8C": {
+        "name": "Beef Stew (Crockpot)",
+        "cuisine": "Misc",
+        "ingredients": [
+          "beef chunks",
+          "small potatoes",
+          "carrots (optional)",
+          "Cabbage (optional)",
+          "Garlic and herb butter",
+          "Lipton onion soup mix"
+        ]
+      },
+      "OKRHziKhFk8gBg6ohDga": {
+        "name": "Kev's Shrimp pasta",
+        "ingredients": [
+          "Pasta",
+          "Cream",
+          "Garlic",
+          "Onion",
+          "Shrimp"
+        ],
+        "cuisine": "Italian"
+      },
+      "OeDXq03WACb1ZZldGRyG": {
+        "name": "Soy Salmon",
+        "cuisine": "Misc",
+        "ingredients": [
+          "salmon",
+          "soy sauce",
+          "chili sauce",
+          "honey",
+          "brown sugar"
+        ]
+      },
+      "QB5wFMwQ2d67O6qxUX9i": {
+        "name": "Ugali + Tilapia",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "Corn Flour",
+          "Tilapia",
+          "Spinach",
+          "Heavy Whipping Cream",
+          "Onion",
+          "Tomatoes",
+          "Garlic"
+        ]
+      },
+      "R4mDoUaviwIEAyJHZhZk": {
+        "name": "Stir Fry",
+        "ingredients": [
+          "shrimp or chicken",
+          "mushroom",
+          "broccoli",
+          "bell pepper (optional)",
+          "snap peas (optional)",
+          "water chestnuts",
+          "bamboo shoots (optional)",
+          "bean sprouts (optional)",
+          "soy sauce",
+          "oyster sauce"
+        ],
+        "cuisine": "Asian"
+      },
+      "RymU5Kla67O5yuke109D": {
+        "name": "Classic Breakfast Burrito",
+        "cuisine": "American",
+        "ingredients": [
+          "4 large tortillas (flour, 10-inch)",
+          "6 large eggs",
+          "1/4 cup milk or cream (optional)",
+          "1 tbsp butter or oil",
+          "1 cup cooked breakfast sausage or diced bacon (optional)",
+          "1 cup cooked diced potatoes (e.g., hash browns, roasted)",
+          "1/2 cup shredded cheddar cheese",
+          "Salt and black pepper to taste",
+          "Salsa or hot sauce for serving (optional)"
+        ]
+      },
+      "S5CX25MyyuTIAO9bNtHz": {
+        "name": "Spring Rolls",
+        "ingredients": [
+          "salmon or shrimp",
+          "spring roll paper",
+          "ramen noodles",
+          "cucumber",
+          "carrot (optional)",
+          "green onion",
+          "avocado",
+          "cilantro"
+        ],
+        "cuisine": "Asian"
+      },
+      "SQLlkikwyXxl6UImfnXm": {
+        "name": "Tater Tot Nachos",
+        "ingredients": [
+          "tater tots",
+          "cheese",
+          "ground beef",
+          "taco seasoning (optional)",
+          "tomato",
+          "cilantro",
+          "onion",
+          "lime",
+          "jalapeño",
+          "avocado"
+        ],
+        "cuisine": "American"
+      },
+      "SYuZ5iuxyQ8vY2g9mMqO": {
+        "cuisine": "Misc",
+        "ingredients": [
+          "lettuce",
+          "black beans",
+          "avocado",
+          "tomato",
+          "cilantro",
+          "ground beef or chicken",
+          "santa fe tortilla strips",
+          "sour cream (optional)",
+          "corn (optional)",
+          "avocado lime ranch dressing (chick-fil-a)"
+        ],
+        "name": "Taco Salad (Tik Tok)"
+      },
+      "SZvwpjVTHTHTA9OhS0aY": {
+        "name": "vegetable",
+        "cuisine": "Misc",
+        "ingredients": [
+          "vegetable"
+        ]
+      },
+      "Sl0yHa6mLgyrA8Dqswvi": {
+        "name": "Kens Ribs",
+        "cuisine": "Misc",
+        "ingredients": [
+          "Salt",
+          "Pepper",
+          "Pork Ribs",
+          "Brown sugar or Cinnamon",
+          "Apple Juice",
+          "BBQ Sauce"
+        ]
+      },
+      "T63fsJXSaCS11wmvOjEs": {
+        "ingredients": [
+          "chicken",
+          "mayo",
+          "sweet chili sauce",
+          "sriracha",
+          "rice"
+        ],
+        "name": "Bang Bang Chicken",
+        "cuisine": "Asian"
+      },
+      "TI9O7287Bvmgd9ZvtOmt": {
+        "name": "Fajitas",
+        "ingredients": [
+          "chicken or shrimp",
+          "onion",
+          "garlic",
+          "bell pepper",
+          "tomato",
+          "jalapeño",
+          "broccoli (optional)",
+          "mushroom (optional)"
+        ],
+        "cuisine": "Mexican"
+      },
+      "TOwQzDbHuiJ9MIQHKXkz": {
+        "name": "Camarones a la mexicana",
+        "ingredients": [
+          "shrimp",
+          "onion",
+          "cilantro",
+          "jalapeño",
+          "tomato"
+        ],
+        "cuisine": "Mexican"
+      },
+      "WFmsZPT3nAArsV6DTi1C": {
+        "name": "Kenyan Beef Liver Stir-Fry",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "500g beef liver, thinly sliced",
+          "1 tbsp cooking oil",
+          "1 large onion, chopped",
+          "2 cloves garlic, minced",
+          "1/2 tsp ginger, grated (optional)",
+          "2 large tomatoes, diced",
+          "1 green bell pepper, sliced (optional)",
+          "1/2 cup beef broth or water",
+          "Salt to taste",
+          "Black pepper to taste",
+          "Fresh cilantro, chopped (for garnish)"
+        ]
+      },
+      "YLUcl62IHU1YmimPwSDT": {
+        "name": "Cilantro Avocado Salsa",
+        "cuisine": "Mexican",
+        "ingredients": [
+          "2 jalapeño",
+          "onion",
+          "garlic",
+          "avocado",
+          "lime",
+          "cilantro"
+        ]
+      },
+      "Yoyis8lNr921aMX99ktO": {
+        "name": "Steak with Chimichurri",
+        "ingredients": [
+          "steak",
+          "cilantro",
+          "parsley",
+          "oil",
+          "white vinegar",
+          "garlic",
+          "red pepper flakes",
+          "dried oregano",
+          "lime"
+        ],
+        "cuisine": "American"
+      },
+      "Ytm97uQIss33Eml4GVDh": {
+        "name": "Protein + Veggie with Mashed Potatoes",
+        "ingredients": [
+          "potato",
+          "protein",
+          "vegetable"
+        ],
+        "cuisine": "Misc"
+      },
+      "ZJcPwBGV0gAlGFLqygdG": {
+        "name": "Bang Bang Salmon",
+        "ingredients": [
+          "salmon",
+          "mayonnaise",
+          "sweet chili sauce",
+          "sriracha",
+          "rice",
+          "avocado (optional)",
+          "vegetable"
+        ],
+        "cuisine": "Asian"
+      },
+      "aAGLpBSUHSrSLqHAK3sj": {
+        "name": "Protein + Veggie with Roasted Potatoes",
+        "ingredients": [
+          "protein",
+          "vegetable",
+          "potato"
+        ],
+        "cuisine": "Misc"
+      },
+      "b6SpjjinBpR2BBRx92L9": {
+        "name": "Grilled Salmon",
+        "cuisine": "Misc",
+        "ingredients": [
+          "salmon"
+        ]
+      },
+      "bI0jV1C15JRSWMmD5rrL": {
+        "name": "Creamy Ramen",
+        "ingredients": [
+          "ramen noodles",
+          "mayonnaise",
+          "egg",
+          "bok choy (optional)"
+        ],
+        "cuisine": "Asian"
+      },
+      "dPlFGYHDBiSqEpqpfCwc": {
+        "name": "Asian Cucumber Salad",
+        "ingredients": [
+          "English cucumber",
+          "soy sauce",
+          "chili oil (optional)",
+          "rice vinegar",
+          "sriracha",
+          "garlic (optional)"
+        ],
+        "cuisine": "Asian"
+      },
+      "dZAypuTAaNU6H4Va7sUh": {
+        "name": "Taco Salad",
+        "ingredients": [
+          "iceberg lettuce",
+          "ground beef",
+          "taco seasoning",
+          "tomato",
+          "red onion",
+          "taco bell hot sauce"
+        ],
+        "cuisine": "American"
+      },
+      "eURpQSwAYM6Z9hxtqYCP": {
+        "name": "Braised Short Ribs with Mashed Potatoes",
+        "cuisine": "Misc",
+        "ingredients": [
+          "Beef short ribs",
+          "onion",
+          "carrot",
+          "celery",
+          "red wine",
+          "beef broth",
+          "garlic",
+          "tomato paste",
+          "rosemary",
+          "thyme (optional)",
+          "potato",
+          "cream",
+          "butter"
+        ]
+      },
+      "eXFujbfmzKpUt5bz3HYG": {
+        "name": "Pozole",
+        "cuisine": "Mexican",
+        "ingredients": [
+          "hominy corn",
+          "pork shoulder/butt",
+          "garlic",
+          "onion",
+          "bay leaf",
+          "chile guajillo",
+          "chile ancho",
+          "cabbage",
+          "lime",
+          "radish (optional)",
+          "cilantro"
+        ]
+      },
+      "flHyAjBMeDermY07ybDI": {
+        "name": "Sudado",
+        "ingredients": [
+          "chicken",
+          "onion",
+          "carrot",
+          "potato",
+          "rice"
+        ],
+        "cuisine": "Colombian"
+      },
+      "gdgDiOtnMvWeT9ZhDewe": {
+        "name": "Chapati",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "All purpose flour",
+          "Oil",
+          "Salt",
+          "Sugar",
+          "Ghee"
+        ]
+      },
+      "grGfUUgzEFf1AqBSgMc0": {
+        "name": "Hazel Peanutbutter Collards",
+        "cuisine": "Kenyan",
+        "ingredients": [
+          "Peanut Butter",
+          "Onions"
+        ]
+      },
+      "iWdoL9aEYxzdRWRBgJgJ": {
+        "name": "Chimichurri Bean Salad",
+        "ingredients": [
+          "turkey deli meat",
+          "onion",
+          "parsley (optional)",
+          "cilantro",
+          "green olives",
+          "garbanzo beans",
+          "white beans",
+          "capers (optional)",
+          "oil",
+          "red wine vinegar",
+          "mustard"
+        ],
+        "cuisine": "Misc"
+      },
+      "ic9nyJqDzV09nITtGR6l": {
+        "name": "Frijoles Charros",
+        "cuisine": "Misc",
+        "ingredients": [
+          "dried pinto beans",
+          "onion",
+          "cilantro",
+          "garlic",
+          "tomato",
+          "jalalpeno",
+          "hot dogs",
+          "chorizo",
+          "bacon"
+        ]
+      },
+      "jHWdu4BnmguMP7onBxg9": {
+        "name": "Breaded Tilapia",
+        "ingredients": [
+          "tilapia",
+          "flour",
+          "egg (optional)"
+        ],
+        "cuisine": "Misc"
+      },
+      "kFro2RLxA93KsK8CfFPi": {
+        "name": "Chicken Adobo",
+        "cuisine": "Asian",
+        "ingredients": [
+          "chicken",
+          "soy sauce",
+          "rice",
+          "white vinegar",
+          "garlic",
+          "peppercorns",
+          "bay leaves",
+          "sugar",
+          "onion"
+        ]
+      },
+      "lF2GpBFgj3VG7J3aVNY3": {
+        "name": "Hot Dogs with chili and chips",
+        "ingredients": [
+          "hot dogs",
+          "hot dog buns",
+          "chili",
+          "mustard",
+          "pickled jalapeño (optional)",
+          "chips"
+        ],
+        "cuisine": "American"
+      },
+      "lF3NtigY44JHJP5pu7G0": {
+        "name": "Egg Salad Lettuce Boats",
+        "ingredients": [
+          "egg",
+          "pickles (optional)",
+          "romaine lettuce",
+          "mayonnaise",
+          "mustard"
+        ],
+        "cuisine": "American"
+      },
+      "ld4ZOVLSKTC8ZxkHjvqI": {
+        "name": "Ramen with dumplings or shrimp tempura",
+        "ingredients": [
+          "ramen noodles",
+          "frozen dumplings",
+          "egg",
+          "green onion (optional)",
+          "rice cakes (optional)",
+          "shrimp tempura (optional)"
+        ],
+        "cuisine": "Asian"
+      },
+      "luupdpoasX8XReqmhavb": {
+        "name": "Spam Musubi",
+        "ingredients": [
+          "Spam",
+          "Seaweed sheets",
+          "teriyaki sauce",
+          "rice",
+          "rice vinegar"
+        ],
+        "cuisine": "Hawaiian"
+      },
+      "oEZdKuu2eLxc1mELk42E": {
+        "name": "Nachos",
+        "ingredients": [
+          "tortilla chips",
+          "cheese",
+          "ground beef",
+          "taco seasoning",
+          "onion",
+          "jalapeño",
+          "tomato",
+          "cilantro",
+          "lime",
+          "avocado"
+        ],
+        "cuisine": "American"
+      },
+      "oVc5btgfH3KivAsEReV6": {
+        "name": "Tinga Tostadas",
+        "cuisine": "Mexican",
+        "ingredients": [
+          "chicken",
+          "onion",
+          "tomato",
+          "garlic",
+          "chipotle peppers",
+          "lettuce",
+          "tostadas",
+          "Mexican sour cream",
+          "queso fresco/cotija"
+        ]
+      },
+      "oZOX1XOiST2tyDSk1EiS": {
+        "name": "Lemon Caper Salmon",
+        "ingredients": [
+          "lime/lemon",
+          "capers",
+          "salmon",
+          "butter"
+        ],
+        "cuisine": "Misc"
+      },
+      "op4RNXDB2Nw54CAc6Uoa": {
+        "name": "Salad",
+        "cuisine": "Misc",
+        "ingredients": [
+          "lettuce",
+          "dressing"
+        ]
+      },
+      "r3CIoD78kOvHzL92hX6M": {
+        "name": "Bacon Cesar Salad",
+        "ingredients": [
+          "romaine lettuce",
+          "bacon",
+          "cesar salad dressing",
+          "parmesan (optional)",
+          "panko (optional)",
+          "brussel sprouts (optional)",
+          "shrimp or salmon"
+        ],
+        "cuisine": "Misc"
+      },
+      "rIRZglHq6uUdc4DKCQwt": {
+        "name": "Shrimp Boil",
+        "cuisine": "American",
+        "ingredients": [
+          "shrimp",
+          "small potatoes",
+          "sausage (optional)",
+          "corn (optional)",
+          "egg",
+          "broccoli (optional)",
+          "seafood boil concentrate",
+          "butter",
+          "garlic",
+          "paprika",
+          "lemon pepper",
+          "cajun seasoning",
+          "old bay",
+          "cayenne pepper",
+          "lemon"
+        ]
+      },
+      "rqD8DzcnINeJZRcwxqXN": {
+        "name": "Pasta Bolognese",
+        "ingredients": [
+          "pasta",
+          "ground beef",
+          "marinara sauce",
+          "cilantro",
+          "onion",
+          "garlic"
+        ],
+        "cuisine": "Italian"
+      },
+      "rqvi9aDewJoV3I6C2keI": {
+        "name": "Protein + Veggie Rice Bowl",
+        "ingredients": [
+          "rice",
+          "protein",
+          "vegetable",
+          "beans (optional)"
+        ],
+        "cuisine": "Misc"
+      },
+      "uZr1jGxKTRaYyVo9E1Ce": {
+        "name": "Grilled Chicken",
+        "ingredients": [
+          "chicken"
+        ],
+        "cuisine": "Misc"
+      },
+      "v0fFtnWdQF9p5NapcYKm": {
+        "name": "Pickled Red Onion",
+        "cuisine": "Misc",
+        "ingredients": [
+          "red onion",
+          "white vinegar",
+          "salt",
+          "sugar"
+        ]
+      },
+      "xANpkrYp2bfPL6t9UZ7w": {
+        "name": "Bowl with veggie and rice",
+        "ingredients": [
+          "salmon",
+          "shrimp",
+          "tilapia"
+        ],
+        "cuisine": "Misc"
+      },
+      "xxGdObR2HJEQazgUNMMH": {
+        "name": "Tacos (Chicken or Shrimp or Fish)",
+        "cuisine": "Mexican",
+        "ingredients": [
+          "Corn tortillas",
+          "chicken",
+          "shrimp",
+          "cilantro",
+          "onion",
+          "jalapeño",
+          "lime",
+          "avocado",
+          "fish",
+          "Tomato"
+        ]
+      },
+      "zuXhxUtqhuq6cnpBGQrJ": {
+        "name": "Spam Bowls",
+        "ingredients": [
+          "spam",
+          "rice",
+          "bok choy (optional)",
+          "teriyaki (optional)",
+          "egg (optional)",
+          "green onion (optional)"
+        ],
+        "cuisine": "Asian"
+      }
+    },
+    "mealPlans": {
+      "April 14, 2025 - April 20, 2025": {
+        "Monday": "5xxOO00K78hvRTShVN1t",
+        "Thursday": "rIRZglHq6uUdc4DKCQwt",
+        "Sunday": "ld4ZOVLSKTC8ZxkHjvqI",
+        "Wednesday": "34qVxbW3TTLc3EW9Q3xZ,4nsIXcbqPkSIBi0T4OrI",
+        "Tuesday": "oEZdKuu2eLxc1mELk42E"
+      },
+      "April 21, 2025 - April 27, 2025": {
+        "Wednesday": "4dmIS3TFRTM2lPmOHFs2",
+        "Thursday": "b6SpjjinBpR2BBRx92L9,34qVxbW3TTLc3EW9Q3xZ,op4RNXDB2Nw54CAc6Uoa",
+        "Monday": "rqvi9aDewJoV3I6C2keI,zuXhxUtqhuq6cnpBGQrJ",
+        "Tuesday": "rqvi9aDewJoV3I6C2keI"
+      },
+      "April 6, 2025 - April 12, 2025": {
+        "Monday": "rqvi9aDewJoV3I6C2keI",
+        "Wednesday": "TOwQzDbHuiJ9MIQHKXkz",
+        "Tuesday": "uZr1jGxKTRaYyVo9E1Ce",
+        "Thursday": "iWdoL9aEYxzdRWRBgJgJ",
+        "Saturday": "xxGdObR2HJEQazgUNMMH"
+      },
+      "August 11, 2025 - August 17, 2025": {
+        "Monday": "ZJcPwBGV0gAlGFLqygdG",
+        "Thursday": "QB5wFMwQ2d67O6qxUX9i",
+        "Wednesday": "rqD8DzcnINeJZRcwxqXN",
+        "Tuesday": "HCi5tYSS66kA1gwFL9tr",
+        "Sunday": "rqvi9aDewJoV3I6C2keI"
+      },
+      "August 18, 2025 - August 24, 2025": {
+        "Thursday": "QB5wFMwQ2d67O6qxUX9i",
+        "Tuesday": "lF2GpBFgj3VG7J3aVNY3",
+        "Wednesday": "MvjJXYn6el87dXhtpzMk",
+        "Monday": "rqvi9aDewJoV3I6C2keI",
+        "Friday": "oZOX1XOiST2tyDSk1EiS"
+      },
+      "August 25, 2025 - August 31, 2025": {
+        "Thursday": "34qVxbW3TTLc3EW9Q3xZ,uZr1jGxKTRaYyVo9E1Ce",
+        "Wednesday": "S5CX25MyyuTIAO9bNtHz",
+        "Monday": "luupdpoasX8XReqmhavb",
+        "Tuesday": "eXFujbfmzKpUt5bz3HYG"
+      },
+      "August 4, 2025 - August 10, 2025": {
+        "Thursday": "MvjJXYn6el87dXhtpzMk",
+        "Wednesday": "ZJcPwBGV0gAlGFLqygdG",
+        "Monday": "rqvi9aDewJoV3I6C2keI",
+        "Tuesday": "uZr1jGxKTRaYyVo9E1Ce,Ytm97uQIss33Eml4GVDh",
+        "Sunday": "Yoyis8lNr921aMX99ktO"
+      },
+      "December 15, 2025 - December 21, 2025": {
+        "Tuesday": "4hDzNQzzYawgy7dEg9er",
+        "Thursday": "ic9nyJqDzV09nITtGR6l",
+        "Monday": "Hl348pXR9sKfPxi4bKlK,SZvwpjVTHTHTA9OhS0aY",
+        "Wednesday": "flHyAjBMeDermY07ybDI"
+      },
+      "July 14, 2025 - July 20, 2025": {
+        "Wednesday": "BFZdjkZ5SiluSJuIoJJU",
+        "Sunday": "0NypcESiGibqRxNnwZDA,YLUcl62IHU1YmimPwSDT",
+        "Thursday": "R4mDoUaviwIEAyJHZhZk",
+        "Saturday": "r3CIoD78kOvHzL92hX6M"
+      },
+      "July 21, 2025 - July 27, 2025": {
+        "Tuesday": "QB5wFMwQ2d67O6qxUX9i",
+        "Wednesday": "4dmIS3TFRTM2lPmOHFs2",
+        "Thursday": "rqD8DzcnINeJZRcwxqXN",
+        "Sunday": "rqvi9aDewJoV3I6C2keI"
+      },
+      "July 28, 2025 - August 3, 2025": {
+        "Wednesday": "kFro2RLxA93KsK8CfFPi",
+        "Thursday": "zuXhxUtqhuq6cnpBGQrJ",
+        "Tuesday": "lF2GpBFgj3VG7J3aVNY3",
+        "Sunday": "OKRHziKhFk8gBg6ohDga"
+      },
+      "July 7, 2025 - July 13, 2025": {
+        "Tuesday": "T63fsJXSaCS11wmvOjEs,dPlFGYHDBiSqEpqpfCwc",
+        "Monday": "rqvi9aDewJoV3I6C2keI",
+        "Thursday": "BFZdjkZ5SiluSJuIoJJU",
+        "Wednesday": "HCi5tYSS66kA1gwFL9tr",
+        "Sunday": "rqvi9aDewJoV3I6C2keI"
+      },
+      "June 16, 2025 - June 22, 2025": {
+        "Wednesday": "r3CIoD78kOvHzL92hX6M",
+        "Monday": "OKRHziKhFk8gBg6ohDga",
+        "Thursday": "MvjJXYn6el87dXhtpzMk",
+        "Tuesday": "eURpQSwAYM6Z9hxtqYCP"
+      },
+      "June 2, 2025 - June 8, 2025": {
+        "Monday": "rqvi9aDewJoV3I6C2keI",
+        "Wednesday": "uZr1jGxKTRaYyVo9E1Ce",
+        "Tuesday": "TI9O7287Bvmgd9ZvtOmt",
+        "Thursday": "zuXhxUtqhuq6cnpBGQrJ",
+        "Sunday": "lF2GpBFgj3VG7J3aVNY3"
+      },
+      "June 23, 2025 - June 29, 2025": {
+        "Wednesday": "QB5wFMwQ2d67O6qxUX9i,Sl0yHa6mLgyrA8Dqswvi",
+        "Friday": "ZJcPwBGV0gAlGFLqygdG",
+        "Saturday": "grGfUUgzEFf1AqBSgMc0"
+      },
+      "June 9, 2025 - June 15, 2025": {
+        "Monday": "rqvi9aDewJoV3I6C2keI",
+        "Sunday": "eURpQSwAYM6Z9hxtqYCP",
+        "Wednesday": "4dmIS3TFRTM2lPmOHFs2,9NqznP2LCwZbNf6aBc0I",
+        "Thursday": "kFro2RLxA93KsK8CfFPi",
+        "Tuesday": "T63fsJXSaCS11wmvOjEs"
+      },
+      "March 30, 2025 - April 5, 2025": {
+        "Thursday": "TOwQzDbHuiJ9MIQHKXkz"
+      },
+      "May 12, 2025 - May 18, 2025": {
+        "Thursday": "rqvi9aDewJoV3I6C2keI",
+        "Monday": "No8BUQyXxdNu4g8vM0Fw,v0fFtnWdQF9p5NapcYKm",
+        "Tuesday": "4Rh26RhBb9tYQytDe44a",
+        "Wednesday": "ZJcPwBGV0gAlGFLqygdG",
+        "Saturday": "QB5wFMwQ2d67O6qxUX9i"
+      },
+      "May 19, 2025 - May 25, 2025": {
+        "Tuesday": "4hDzNQzzYawgy7dEg9er",
+        "Wednesday": "TI9O7287Bvmgd9ZvtOmt",
+        "Thursday": "xxGdObR2HJEQazgUNMMH",
+        "Sunday": "eURpQSwAYM6Z9hxtqYCP"
+      },
+      "May 5, 2025 - May 11, 2025": {
+        "Wednesday": "rqvi9aDewJoV3I6C2keI",
+        "Friday": "MvjJXYn6el87dXhtpzMk",
+        "Thursday": "zuXhxUtqhuq6cnpBGQrJ",
+        "Saturday": "OKRHziKhFk8gBg6ohDga"
+      },
+      "November 10, 2025 - November 16, 2025": {
+        "Wednesday": "rqvi9aDewJoV3I6C2keI",
+        "Thursday": "3ZztT8SgWbKGYcx2jA4J",
+        "Sunday": "ZJcPwBGV0gAlGFLqygdG"
+      },
+      "November 17, 2025 - November 23, 2025": {
+        "Thursday": "ic9nyJqDzV09nITtGR6l",
+        "Wednesday": "rqvi9aDewJoV3I6C2keI",
+        "Tuesday": "SYuZ5iuxyQ8vY2g9mMqO"
+      },
+      "November 24, 2025 - November 30, 2025": {
+        "Sunday": "rqD8DzcnINeJZRcwxqXN",
+        "Wednesday": "rqvi9aDewJoV3I6C2keI",
+        "Tuesday": "D982Fhc0T0gBsmeYhonv"
+      },
+      "November 3, 2025 - November 9, 2025": {
+        "Wednesday": "rqD8DzcnINeJZRcwxqXN",
+        "Monday": "OHF3HVO62HC5etIbsX8C",
+        "Tuesday": "eXFujbfmzKpUt5bz3HYG",
+        "Sunday": "MvjJXYn6el87dXhtpzMk",
+        "Thursday": "4GUmHssAkwawrffrCCIV"
+      },
+      "October 13, 2025 - October 19, 2025": {
+        "Wednesday": "lF2GpBFgj3VG7J3aVNY3",
+        "Sunday": "9NqznP2LCwZbNf6aBc0I,OeDXq03WACb1ZZldGRyG,SZvwpjVTHTHTA9OhS0aY",
+        "Thursday": "rqvi9aDewJoV3I6C2keI",
+        "Saturday": ""
+      },
+      "October 20, 2025 - October 26, 2025": {
+        "Wednesday": "oZOX1XOiST2tyDSk1EiS",
+        "Monday": "2TNELa1NL79A0DkMCF7R",
+        "Thursday": "rqD8DzcnINeJZRcwxqXN",
+        "Tuesday": "uZr1jGxKTRaYyVo9E1Ce,Ytm97uQIss33Eml4GVDh",
+        "Sunday": "OHF3HVO62HC5etIbsX8C"
+      },
+      "October 27, 2025 - November 2, 2025": {
+        "Wednesday": "uZr1jGxKTRaYyVo9E1Ce,Ytm97uQIss33Eml4GVDh",
+        "Monday": "oZOX1XOiST2tyDSk1EiS",
+        "Tuesday": "OHF3HVO62HC5etIbsX8C",
+        "Sunday": "eXFujbfmzKpUt5bz3HYG"
+      },
+      "October 6, 2025 - October 12, 2025": {
+        "Monday": "HCi5tYSS66kA1gwFL9tr",
+        "Wednesday": "rqvi9aDewJoV3I6C2keI",
+        "Tuesday": "OKRHziKhFk8gBg6ohDga",
+        "Thursday": "oEZdKuu2eLxc1mELk42E",
+        "Sunday": "MvjJXYn6el87dXhtpzMk"
+      },
+      "September 1, 2025 - September 7, 2025": {
+        "Monday": "34qVxbW3TTLc3EW9Q3xZ,b6SpjjinBpR2BBRx92L9",
+        "Tuesday": "7J2G93tscn9wCSES7ZNp",
+        "Thursday": "rqvi9aDewJoV3I6C2keI",
+        "Wednesday": "oVc5btgfH3KivAsEReV6",
+        "Saturday": "gdgDiOtnMvWeT9ZhDewe"
+      },
+      "September 15, 2025 - September 21, 2025": {
+        "Wednesday": "rqvi9aDewJoV3I6C2keI",
+        "Monday": "4dmIS3TFRTM2lPmOHFs2",
+        "Friday": "HCi5tYSS66kA1gwFL9tr",
+        "Thursday": "lF2GpBFgj3VG7J3aVNY3"
+      },
+      "September 29, 2025 - October 5, 2025": {
+        "Wednesday": "luupdpoasX8XReqmhavb",
+        "Monday": "4dmIS3TFRTM2lPmOHFs2",
+        "Sunday": "TI9O7287Bvmgd9ZvtOmt",
+        "Thursday": "aAGLpBSUHSrSLqHAK3sj",
+        "Tuesday": "rqD8DzcnINeJZRcwxqXN"
+      },
+      "September 8, 2025 - September 14, 2025": {
+        "Monday": "Ytm97uQIss33Eml4GVDh",
+        "Thursday": "iWdoL9aEYxzdRWRBgJgJ",
+        "Tuesday": "rqD8DzcnINeJZRcwxqXN",
+        "Wednesday": "4nsIXcbqPkSIBi0T4OrI",
+        "Sunday": "OKRHziKhFk8gBg6ohDga"
+      },
+      "cyRI1P4oJYRNFmxeWFyBjXLTLW83_December 29, 2025 - January 4, 2026": {
+        "Tuesday": "1DLTXGsFO7MUVEGXb6wE",
+        "Monday": "H1bwoHyRvXJ76EGqBoHw",
+        "weekRange": "December 29, 2025 - January 4, 2026",
+        "createdAt": {
+          "_seconds": 1766875491,
+          "_nanoseconds": 619000000
+        },
+        "userId": "cyRI1P4oJYRNFmxeWFyBjXLTLW83",
+        "updatedAt": {
+          "_seconds": 1766876574,
+          "_nanoseconds": 393000000
+        }
+      }
+    },
+    "shoppingLists": {
+      "April 14, 2025 - April 20, 2025": {
+        "weekRange": "April 14, 2025 - April 20, 2025",
+        "miscItems": [
+          "Sugar",
+          "Butter"
+        ]
+      },
+      "April 21, 2025 - April 27, 2025": {
+        "weekRange": "April 21, 2025 - April 27, 2025",
+        "miscItems": [
+          "Spam",
+          "Teriyaki",
+          "Oat milk",
+          "Chai",
+          "Soda"
+        ]
+      },
+      "August 11, 2025 - August 17, 2025": {
+        "weekRange": "August 11, 2025 - August 17, 2025",
+        "miscItems": [
+          "salmon",
+          "shrimp",
+          "tilapia breaded",
+          "Coco treats",
+          "oat milk",
+          "eggs",
+          "paprika",
+          "salt",
+          "fix-free Celsius",
+          "chips - costco",
+          "chicken breast"
+        ],
+        "checkedItems": [
+          "avocado (optional) (x2)",
+          "beans (optional) (x1)",
+          "chuck roast (x1)",
+          "corn flour (x1)",
+          "cumin (x1)",
+          "mayonnaise (x1)",
+          "pasta (x1)",
+          "protein (x1)",
+          "rice (x2)",
+          "salmon (x1)",
+          "sriracha (x1)",
+          "sweet chili sauce (x1)",
+          "tilapia (x1)",
+          "ground beef (x1)",
+          "garlic (x3)",
+          "cilantro (x1)",
+          "onion (x3)",
+          "vegetable (x2)",
+          "tomato (x1)",
+          "tomatoes (x1)",
+          "green onion (x1)",
+          "marinara sauce (x1)",
+          "oat milk",
+          "heavy whipping cream (x1)",
+          "spinach (x1)",
+          "chicken breast",
+          "eggs",
+          "salmon",
+          "shrimp",
+          "tilapia breaded",
+          "fix-free Celsius",
+          "Coco treats",
+          "paprika",
+          "salt"
+        ]
+      },
+      "August 18, 2025 - August 24, 2025": {
+        "weekRange": "August 18, 2025 - August 24, 2025",
+        "miscItems": [
+          "Bone broth"
+        ],
+        "checkedItems": [
+          "beans (optional) (x1)",
+          "avocado (optional) (x1)",
+          "butter (x1)",
+          "chili (x1)",
+          "corn flour (x1)",
+          "egg (x1)",
+          "hot dogs (x1)",
+          "lime/lemon (x1)",
+          "lettuce (x1)",
+          "mayonnaise (x1)",
+          "mustard (x1)",
+          "pickled jalapeño (optional) (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "salmon (x1)",
+          "spinach (x1)",
+          "tilapia (x1)",
+          "vegetable (x1)",
+          "heavy whipping cream (x1)",
+          "capers (x1)",
+          "tomatoes (x1)",
+          "onion (x1)",
+          "garlic (x1)",
+          "sliced cheese (x1)",
+          "hot dog buns (x1)",
+          "bread (x1)",
+          "bologna (x1)",
+          "chips (x1)"
+        ]
+      },
+      "August 25, 2025 - August 31, 2025": {
+        "weekRange": "August 25, 2025 - August 31, 2025",
+        "checkedItems": [
+          "bay leaf (x1)",
+          "chicken (x1)",
+          "cream (x1)",
+          "rice (x1)",
+          "rice vinegar (x1)",
+          "salmon or shrimp (x1)",
+          "teriyaki sauce (x1)",
+          "seaweed sheets (x1)",
+          "spring roll paper (x1)",
+          "avocado (x1)",
+          "onion (x2)",
+          "garlic (x1)",
+          "carrot (optional) (x1)",
+          "cilantro (x2)",
+          "green onion (x1)",
+          "mushrooms (x1)",
+          "cucumber (x1)",
+          "cabbage (x1)",
+          "radish (optional) (x1)",
+          "ramen noodles (x1)",
+          "chile guajillo (x1)",
+          "chile ancho (x1)",
+          "lime (x1)",
+          "spam (x1)",
+          "hominy corn (x1)",
+          "pork shoulder/butt (x1)"
+        ]
+      },
+      "August 4, 2025 - August 10, 2025": {
+        "weekRange": "August 4, 2025 - August 10, 2025",
+        "miscItems": [
+          "potato",
+          "green beans cans",
+          "vegetable for steak"
+        ],
+        "checkedItems": [
+          "bread (x1)",
+          "chicken (x1)",
+          "dried oregano (x1)",
+          "lime (x1)",
+          "mayonnaise (x2)",
+          "oil (x1)",
+          "red pepper flakes (x1)",
+          "rice (x2)",
+          "salmon (x1)",
+          "sliced cheese (x1)",
+          "sriracha (x1)",
+          "sweet chili sauce (x1)",
+          "white vinegar (x1)",
+          "beans (optional) (x1)",
+          "bologna (x1)",
+          "protein (x2)",
+          "cilantro (x1)",
+          "garlic (x1)",
+          "lettuce (x1)",
+          "parsley (x1)",
+          "potato (x1)",
+          "potato",
+          "vegetable for steak",
+          "avocado (optional) (x2)",
+          "egg (x1)",
+          "vegetable (x3)",
+          "green beans cans"
+        ]
+      },
+      "December 15, 2025 - December 21, 2025": {
+        "weekRange": "December 15, 2025 - December 21, 2025",
+        "miscItems": [
+          "cucumber",
+          "oat milk",
+          "parmesan",
+          "corn nuts",
+          "fruit",
+          "bread",
+          "to go ramen or mac and cheese",
+          "Indomie"
+        ],
+        "checkedItems": [
+          "chili sauce (x1)",
+          "chorizo (x1)",
+          "dried pinto beans (x1)",
+          "cilantro (optional) (x1)",
+          "hot dogs (x1)",
+          "red pepper flakes (x1)",
+          "rice (x1)",
+          "rice vinegar (x1)",
+          "salmon (x1)",
+          "shrimp or salmon (x1)",
+          "soy sauce (x1)",
+          "sriracha (x1)",
+          "sugar (x1)",
+          "tomato (x1)",
+          "pasta (x1)",
+          "jalalpeno (x1)",
+          "chicken (x1)",
+          "bacon (x1)",
+          "onion (x3)",
+          "lemon/lime (x1)",
+          "garlic (x2)",
+          "vegetable (optional) (x1)",
+          "cucumber",
+          "potato (x1)",
+          "cilantro (x1)",
+          "carrot (x1)",
+          "vegetable (x1)",
+          "fruit",
+          "bread",
+          "to go ramen or mac and cheese",
+          "parmesan",
+          "Indomie",
+          "oat milk"
+        ]
+      },
+      "July 14, 2025 - July 20, 2025": {
+        "weekRange": "July 14, 2025 - July 20, 2025",
+        "miscItems": [
+          "broccolini",
+          "instant espresso"
+        ],
+        "checkedItems": [
+          "bay leaves (x1)",
+          "bean sprouts (optional) (x1)",
+          "capers (x1)",
+          "cream (optional) (x1)",
+          "lard or ghee or oil (x1)",
+          "lemon/lime (x1)",
+          "lime (x1)",
+          "panko (optional) (x1)",
+          "parmesan (optional) (x1)",
+          "oyster sauce (x1)",
+          "shrimp (x1)",
+          "shrimp or chicken (x1)",
+          "shrimp or salmon (x1)",
+          "snap peas (optional) (x1)",
+          "soy sauce (x1)",
+          "tortillas (optional) (x1)",
+          "pepsi or coke (x1)",
+          "oregano (x1)",
+          "cilantro (x1)",
+          "avocado (x1)",
+          "bell pepper (optional) (x1)",
+          "onion (x2)",
+          "garlic (x2)",
+          "2 jalapeño (x1)",
+          "mushroom (x1)",
+          "orange (x1)",
+          "broccolini",
+          "white onion (x1)",
+          "romaine lettuce (x1)",
+          "brussel sprouts (optional) (x1)",
+          "bacon (x1)",
+          "bamboo shoots (optional) (x1)",
+          "water chestnuts (x1)"
+        ]
+      },
+      "July 21, 2025 - July 27, 2025": {
+        "weekRange": "July 21, 2025 - July 27, 2025",
+        "miscItems": [
+          "collard greens",
+          "Pumpkin purée",
+          "Beef broth"
+        ],
+        "checkedItems": [
+          "beans (optional) (x1)",
+          "butter (x1)",
+          "corn flour (x1)",
+          "flour (x1)",
+          "garlic (x3)",
+          "ground beef (x1)",
+          "heavy whipping cream (x1)",
+          "pasta (x1)",
+          "protein (x1)",
+          "rice (x2)",
+          "shrimp (x1)",
+          "tilapia (x1)",
+          "spinach (x1)",
+          "vegetable (x1)",
+          "tomatoes (x1)",
+          "onion (x2)",
+          "cilantro (x1)",
+          "marinara sauce (x1)",
+          "Beef broth",
+          "Pumpkin purée",
+          "collard greens"
+        ]
+      },
+      "July 28, 2025 - August 3, 2025": {
+        "weekRange": "July 28, 2025 - August 3, 2025",
+        "checkedItems": [
+          "bay leaves (x1)",
+          "chicken (x1)",
+          "egg (optional) (x1)",
+          "garlic (x2)",
+          "green onion (optional) (x1)",
+          "mustard (x1)",
+          "pasta (x1)",
+          "peppercorns (x1)",
+          "pickled jalapeño (optional) (x1)",
+          "rice (x2)",
+          "shrimp (x1)",
+          "soy sauce (x1)",
+          "sugar (x1)",
+          "white vinegar (x1)",
+          "cream (x1)",
+          "onion (x2)",
+          "hot dog buns (x1)",
+          "chili (x1)",
+          "bok choy (optional) (x1)",
+          "spam (x1)",
+          "teriyaki (optional) (x1)",
+          "chips (x1)",
+          "hot dogs (x1)"
+        ]
+      },
+      "July 7, 2025 - July 13, 2025": {
+        "weekRange": "July 7, 2025 - July 13, 2025",
+        "miscItems": [
+          "Milk",
+          "Chai",
+          "Fruit",
+          "Soda"
+        ],
+        "checkedItems": [
+          "rice (x3)",
+          "protein (x2)",
+          "beans (optional) (x2)",
+          "chicken (x1)",
+          "mayo (x1)",
+          "sweet chili sauce (x1)",
+          "sriracha (x2)",
+          "soy sauce (x1)",
+          "chili oil (optional) (x1)",
+          "rice vinegar (x1)",
+          "garlic (optional) (x1)",
+          "chuck roast (x1)",
+          "shrimp (x1)",
+          "lemon/lime (x1)",
+          "cumin (x1)",
+          "english cucumber (x1)",
+          "cilantro (optional) (x1)",
+          "garlic (x1)",
+          "onion (x2)",
+          "vegetable (x2)",
+          "tomato (x1)",
+          "green onion (x1)",
+          "avocado (optional) (x1)",
+          "Fruit",
+          "Chai",
+          "Milk",
+          "cream (optional) (x1)",
+          "capers (x1)",
+          "Soda"
+        ]
+      },
+      "June 16, 2025 - June 22, 2025": {
+        "weekRange": "June 16, 2025 - June 22, 2025",
+        "checkedItems": [
+          "panko (optional) (x1)",
+          "garlic (x2)",
+          "romaine lettuce (x1)",
+          "mayonnaise (x1)",
+          "tomato paste (x1)",
+          "sliced cheese (x1)",
+          "shrimp (x1)"
+        ]
+      },
+      "June 2, 2025 - June 8, 2025": {
+        "weekRange": "June 2, 2025 - June 8, 2025",
+        "miscItems": [
+          "oat milk",
+          "Limes",
+          "Soda",
+          "Rice vinegar",
+          "bell pepper"
+        ]
+      },
+      "June 23, 2025 - June 29, 2025": {
+        "weekRange": "June 23, 2025 - June 29, 2025",
+        "miscItems": [
+          "Paper towel"
+        ],
+        "checkedItems": [
+          "pepper (x1)",
+          "garlic (x1)",
+          "corn flour (x1)",
+          "bbq sauce (x1)",
+          "apple juice (x1)"
+        ]
+      },
+      "May 5, 2025 - May 11, 2025": {
+        "weekRange": "May 5, 2025 - May 11, 2025",
+        "miscItems": [
+          "cilantro",
+          "Zucchini",
+          "Oat Milk"
+        ]
+      },
+      "November 10, 2025 - November 16, 2025": {
+        "weekRange": "November 10, 2025 - November 16, 2025",
+        "miscItems": [
+          "Soda",
+          "Cilantro",
+          "milk"
+        ],
+        "checkedItems": [
+          "choice of protein (chicken/beef/fish) (x1)",
+          "maize flour (x1)",
+          "mayonnaise (x1)",
+          "sriracha (x1)",
+          "tomato paste (x1)",
+          "sweet chili sauce (x1)",
+          "avocado (optional) (x1)",
+          "beans (optional) (x1)",
+          "protein (x1)",
+          "rice (x2)",
+          "salmon (x1)",
+          "cilantro (x1)",
+          "Cilantro",
+          "choice of veggie (collard greens/spinach) (x1)",
+          "onion (x1)",
+          "tomatoes (x1)",
+          "vegetable (x2)"
+        ]
+      },
+      "November 17, 2025 - November 23, 2025": {
+        "weekRange": "November 17, 2025 - November 23, 2025",
+        "miscItems": [
+          "tomato sauce",
+          "chips",
+          "cilantro"
+        ],
+        "checkedItems": [
+          "avocado (x1)",
+          "bacon (x1)",
+          "beans (optional) (x1)",
+          "corn (optional) (x1)",
+          "ground beef or chicken (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "sour cream (optional) (x1)",
+          "garlic (x1)",
+          "hot dogs (x1)",
+          "onion (x1)",
+          "tomato (x2)",
+          "cilantro (x2)",
+          "cilantro",
+          "vegetable (x1)",
+          "avocado lime ranch dressing (chick-fil-a) (x1)",
+          "jalalpeno (x1)",
+          "lettuce (x1)",
+          "santa fe tortilla strips (x1)",
+          "black beans (x1)",
+          "dried pinto beans (x1)",
+          "tomato sauce",
+          "chorizo (x1)",
+          "chips"
+        ]
+      },
+      "November 24, 2025 - November 30, 2025": {
+        "weekRange": "November 24, 2025 - November 30, 2025",
+        "miscItems": [
+          "roma tomatos x3",
+          "milk",
+          "greek yogurt",
+          "Brussels sprouts"
+        ],
+        "checkedItems": [
+          "1 cinnamon stick (x1)",
+          "1 tsp whole black peppercorns (x1)",
+          "2 bay leaves (x1)",
+          "2 cups basmati rice, rinsed (x1)",
+          "2 tomatoes, pureed (optional) (x1)",
+          "2 tbsp pilau masala spice mix (x1)",
+          "3 tbsp cooking oil (x1)",
+          "beans (optional) (x1)",
+          "garlic (x1)",
+          "ground beef (x1)",
+          "marinara sauce (x1)",
+          "pasta (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "salt to taste (x1)",
+          "milk",
+          "1 large onion, finely chopped (x1)",
+          "3 cloves garlic, minced (x1)",
+          "cilantro (x1)",
+          "onion (x1)",
+          "1-inch ginger, grated (x1)",
+          "roma tomatos x3",
+          "Brussels sprouts",
+          "vegetable (x1)",
+          "4-5 whole cloves (x1)",
+          "greek yogurt",
+          "3 cups beef broth or water (x1)",
+          "500g beef or goat, cubed (x1)"
+        ]
+      },
+      "November 3, 2025 - November 9, 2025": {
+        "weekRange": "November 3, 2025 - November 9, 2025",
+        "miscItems": [
+          "eggs (Costco)",
+          "ground beef (Costco)",
+          "dog food (Costco)",
+          "chicken breast (Costco)",
+          "shrimp (Costco)",
+          "tilapia (Costco)",
+          "salmon (Costco)"
+        ],
+        "checkedItems": [
+          "bay leaf (x1)",
+          "beef chunks (x1)",
+          "bread (x1)",
+          "cabbage (optional) (x1)",
+          "cabbage (x1)",
+          "carrots (optional) (x1)",
+          "chile ancho (x1)",
+          "chile guajillo (x1)",
+          "cilantro (x2)",
+          "egg (x1)",
+          "garlic (x2)",
+          "garlic and herb butter (x1)",
+          "ground beef (x1)",
+          "hominy corn (x1)",
+          "lipton onion soup mix (x1)",
+          "lime (x1)",
+          "mayonnaise (x1)",
+          "pasta (x1)",
+          "pork shoulder/butt (x1)",
+          "radish (optional) (x1)",
+          "rice (x1)",
+          "salmon (x1)",
+          "sliced cheese (x1)",
+          "onion (x2)",
+          "small potatoes (x1)",
+          "avocado (optional) (x1)",
+          "bologna (x1)",
+          "dog food (Costco)",
+          "lettuce (x1)",
+          "avocado (x1)",
+          "ground beef (Costco)",
+          "eggs (Costco)",
+          "chicken breast (Costco)",
+          "shrimp (Costco)",
+          "tilapia (Costco)",
+          "salmon (Costco)",
+          "kewpie mayo (x1)",
+          "marinara sauce (x1)",
+          "seaweed sheets (x1)"
+        ]
+      },
+      "October 13, 2025 - October 19, 2025": {
+        "weekRange": "October 13, 2025 - October 19, 2025",
+        "miscItems": [
+          "Soda",
+          "Eggs"
+        ],
+        "checkedItems": [
+          "beans (optional) (x1)",
+          "brown sugar (x1)",
+          "carrot (x1)",
+          "elbow pasta (x1)",
+          "honey (x1)",
+          "hot dogs (x1)",
+          "mayonnaise (x1)",
+          "milk (x1)",
+          "mustard (x1)",
+          "pickled jalapeño (optional) (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "salmon (x1)",
+          "soy sauce (x1)",
+          "sugar (x1)",
+          "vinegar (red or apple) (x1)",
+          "hot dog buns (x1)",
+          "vegetable (x2)",
+          "chili (x1)",
+          "Eggs",
+          "chili sauce (x1)",
+          "chips (x1)"
+        ]
+      },
+      "October 20, 2025 - October 26, 2025": {
+        "weekRange": "October 20, 2025 - October 26, 2025",
+        "miscItems": [
+          "Mayo",
+          "Soy sauce"
+        ],
+        "checkedItems": [
+          "beef chunks (x1)",
+          "cabbage (optional) (x1)",
+          "carrot (x1)",
+          "carrots (optional) (x1)",
+          "chicken (x1)",
+          "hot dog (optional) (x1)",
+          "lime/lemon (x1)",
+          "pasta (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "salmon (x1)",
+          "capers (x1)",
+          "cilantro (x2)",
+          "green onion (x1)",
+          "ground beef (x1)",
+          "red onion (x1)",
+          "onion (x1)",
+          "potato (x2)",
+          "tomato (x1)",
+          "served with egg (optional) (x1)",
+          "small potatoes (x1)",
+          "garlic (x2)",
+          "vegetable (x1)",
+          "served with plantains (optional) (x1)",
+          "butter (x1)",
+          "garlic and herb butter (x1)",
+          "Mayo",
+          "Soy sauce",
+          "marinara sauce (x1)",
+          "pork (chicharron or chunks) (x1)",
+          "lipton onion soup mix (x1)",
+          "lentils (x1)"
+        ]
+      },
+      "October 27, 2025 - November 2, 2025": {
+        "weekRange": "October 27, 2025 - November 2, 2025",
+        "miscItems": [
+          "Eggs",
+          "Chocolate milk",
+          "Marshmallow fluff"
+        ],
+        "checkedItems": [
+          "bay leaf (x1)",
+          "beef chunks (x1)",
+          "butter (x1)",
+          "cabbage (optional) (x1)",
+          "capers (x1)",
+          "carrots (optional) (x1)",
+          "garlic (x1)",
+          "lime (x1)",
+          "lime/lemon (x1)",
+          "lipton onion soup mix (x1)",
+          "protein (x1)",
+          "radish (optional) (x1)",
+          "small potatoes (x1)",
+          "salmon (x1)",
+          "chicken (x1)",
+          "cabbage (x1)",
+          "cilantro (x1)",
+          "onion (x1)",
+          "potato (x1)",
+          "vegetable (x1)",
+          "Eggs",
+          "chile ancho (x1)",
+          "chile guajillo (x1)",
+          "garlic and herb butter (x1)",
+          "hominy corn (x1)",
+          "Chocolate milk",
+          "Marshmallow fluff"
+        ]
+      },
+      "October 6, 2025 - October 12, 2025": {
+        "weekRange": "October 6, 2025 - October 12, 2025",
+        "miscItems": [
+          "Ketchup"
+        ],
+        "checkedItems": [
+          "avocado (optional) (x2)",
+          "beans (optional) (x1)",
+          "chuck roast (x1)",
+          "cumin (x1)",
+          "garlic (x2)",
+          "ground beef (x1)",
+          "lime (x1)",
+          "mayonnaise (x1)",
+          "pasta (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "shrimp (x1)",
+          "bread (x1)",
+          "taco seasoning (x1)",
+          "lettuce (x1)",
+          "jalapeño (x1)",
+          "onion (x3)",
+          "tomato (x2)",
+          "avocado (x1)",
+          "cilantro (x1)",
+          "green onion (x1)",
+          "vegetable (x1)",
+          "sliced cheese (x1)",
+          "egg (x1)",
+          "cream (x1)",
+          "cheese (x1)",
+          "Ketchup",
+          "tortilla chips (x1)",
+          "bologna (x1)"
+        ]
+      },
+      "September 1, 2025 - September 7, 2025": {
+        "weekRange": "September 1, 2025 - September 7, 2025",
+        "miscItems": [
+          "oat milk",
+          "mac n cheese box",
+          "soda",
+          "beef broth"
+        ],
+        "checkedItems": [
+          "all purpose flour (x1)",
+          "beans (optional) (x1)",
+          "chicken (x1)",
+          "cream (x2)",
+          "ghee (x1)",
+          "ground beef (x1)",
+          "mushrooms (x1)",
+          "oil (x1)",
+          "protein (x1)",
+          "rice (x1)",
+          "salmon (x1)",
+          "salt (x1)",
+          "sugar (x1)",
+          "lettuce (x1)",
+          "soda",
+          "oat milk",
+          "marinara pasta sauce (x1)",
+          "lasagna pasta (x1)",
+          "tostadas (x1)",
+          "mac n cheese box",
+          "beef broth",
+          "tomato paste (x1)",
+          "chipotle peppers (x1)",
+          "chicken broth (x1)",
+          "garlic (x2)",
+          "onion (x3)",
+          "mexican sour cream (x1)",
+          "tomato (x1)",
+          "vegetable (x1)",
+          "ricotta cheese (optional) (x1)",
+          "queso fresco/cotija (x1)"
+        ]
+      },
+      "September 15, 2025 - September 21, 2025": {
+        "weekRange": "September 15, 2025 - September 21, 2025",
+        "miscItems": [
+          "tomato sauce",
+          "tomato (2 more)",
+          "cilantro (x3)",
+          "onion (x3)",
+          "plain greek yogurt",
+          "unsalted butter",
+          "milk",
+          "bananas",
+          "onion powder"
+        ],
+        "checkedItems": [
+          "flour (x1)",
+          "rice (x2)",
+          "protein (x1)",
+          "shrimp (x1)",
+          "mustard (x1)",
+          "cumin (x1)",
+          "beans (optional) (x1)",
+          "green onion (x1)",
+          "onion (x1)",
+          "vegetable (x1)",
+          "avocado (optional) (x1)",
+          "garlic (x2)",
+          "onion (x3)",
+          "tomato (2 more)",
+          "tomato (x1)",
+          "cilantro (x3)",
+          "unsalted butter",
+          "bananas",
+          "plain greek yogurt",
+          "butter (x1)",
+          "tomato sauce",
+          "onion powder",
+          "hot dog buns (x1)",
+          "chips (x1)",
+          "milk",
+          "chuck roast (x1)",
+          "hot dogs (x1)",
+          "pickled jalapeño (optional) (x1)",
+          "chili (x1)"
+        ]
+      },
+      "September 29, 2025 - October 5, 2025": {
+        "weekRange": "September 29, 2025 - October 5, 2025",
+        "miscItems": [
+          "salmon",
+          "tilapia",
+          "chicken drumsticks",
+          "bully sticks",
+          "limes"
+        ],
+        "checkedItems": [
+          "butter (x1)",
+          "chicken or shrimp (x1)",
+          "flour (x1)",
+          "garlic (x3)",
+          "ground beef (x1)",
+          "protein (x1)",
+          "rice (x2)",
+          "rice vinegar (x1)",
+          "shrimp (x1)",
+          "teriyaki sauce (x1)",
+          "limes",
+          "vegetable (x1)",
+          "tilapia",
+          "chicken drumsticks",
+          "salmon",
+          "bully sticks",
+          "marinara sauce (x1)",
+          "cilantro (x1)",
+          "bell pepper (x1)",
+          "mushroom (optional) (x1)",
+          "onion (x2)",
+          "potato (x1)",
+          "tomato (x1)",
+          "jalapeño (x1)",
+          "broccoli (optional) (x1)",
+          "pasta (x1)",
+          "spam (x1)",
+          "seaweed sheets (x1)"
+        ]
+      },
+      "September 8, 2025 - September 14, 2025": {
+        "weekRange": "September 8, 2025 - September 14, 2025",
+        "checkedItems": [
+          "potato (x1)",
+          "parsley (optional) (x1)",
+          "ground beef (x1)",
+          "protein (x1)",
+          "shrimp (x1)",
+          "red wine vinegar (x1)",
+          "pasta (x2)",
+          "oil (x1)",
+          "mustard (x1)",
+          "cream (x1)",
+          "chicken (x1)",
+          "cilantro (x2)",
+          "onion (x4)",
+          "vegetable (x1)",
+          "garlic (x3)",
+          "garbanzo beans (x1)",
+          "white beans (x1)",
+          "marinara sauce (x1)",
+          "capers (optional) (x1)",
+          "green olives (x1)",
+          "turkey deli meat (x1)"
+        ]
+      },
+      "cyRI1P4oJYRNFmxeWFyBjXLTLW83_December 29, 2025 - January 4, 2026": {
+        "weekRange": "December 29, 2025 - January 4, 2026",
+        "userId": "cyRI1P4oJYRNFmxeWFyBjXLTLW83",
+        "miscItems": [
+          "Paper"
+        ],
+        "categorizedIngredients": {
+          "Produce": [
+            {
+              "name": "1 clove garlic, smashed (x1)",
+              "category": "Produce",
+              "emoji": "🥬"
+            },
+            {
+              "name": "1 sprig fresh rosemary or thyme (x1)",
+              "category": "Produce",
+              "emoji": "🥬"
+            },
+            {
+              "name": "2 large russet potatoes (x1)",
+              "category": "Produce",
+              "emoji": "🥬"
+            }
+          ],
+          "Dairy": [
+            {
+              "name": "1 tbsp unsalted butter (x1)",
+              "category": "Dairy",
+              "emoji": "🥛"
+            }
+          ],
+          "Spices": [
+            {
+              "name": "1/2 tsp salt (for frites) (x1)",
+              "category": "Spices",
+              "emoji": "🌶️"
+            },
+            {
+              "name": "1/4 tsp black pepper (for frites) (x1)",
+              "category": "Spices",
+              "emoji": "🌶️"
+            },
+            {
+              "name": "freshly ground black pepper, to taste (x1)",
+              "category": "Spices",
+              "emoji": "🌶️"
+            },
+            {
+              "name": "pinch of paprika (x1)",
+              "category": "Spices",
+              "emoji": "🌶️"
+            },
+            {
+              "name": "salt, to taste (x1)",
+              "category": "Spices",
+              "emoji": "🌶️"
+            }
+          ],
+          "Beverages": [
+            {
+              "name": "water (x1)",
+              "category": "Beverages",
+              "emoji": "🥤"
+            }
+          ],
+          "Condiments": [
+            {
+              "name": "1 tbsp olive oil (for steak) (x1)",
+              "category": "Condiments",
+              "emoji": "🍯"
+            },
+            {
+              "name": "2 tbsp olive oil (for frites) (x1)",
+              "category": "Condiments",
+              "emoji": "🍯"
+            }
+          ],
+          "Meat": [
+            {
+              "name": "1 (10-12 oz) sirloin or ribeye steak, about 1-inch thick (x1)",
+              "category": "Meat",
+              "emoji": "🥩"
+            },
+            {
+              "name": "mistery meat (x1)",
+              "category": "Meat",
+              "emoji": "🥩"
+            }
+          ],
+          "Utensils": [
+            {
+              "name": "paper towel (x1)",
+              "category": "Utensils",
+              "emoji": "🍴"
+            }
+          ]
+        },
+        "ingredientsHash": "167588777",
+        "checkedItems": [
+          "water (x1)"
+        ],
+        "ingredientOrder": {
+          "Utensils": [
+            {
+              "name": "paper towel (x1)",
+              "emoji": "🍴",
+              "category": "Utensils"
+            }
+          ],
+          "Spices": [
+            {
+              "emoji": "🌶️",
+              "name": "1/2 tsp salt (for frites) (x1)",
+              "category": "Spices"
+            },
+            {
+              "emoji": "🌶️",
+              "category": "Spices",
+              "name": "1/4 tsp black pepper (for frites) (x1)"
+            },
+            {
+              "name": "freshly ground black pepper, to taste (x1)",
+              "emoji": "🌶️",
+              "category": "Spices"
+            },
+            {
+              "emoji": "🌶️",
+              "name": "pinch of paprika (x1)",
+              "category": "Spices"
+            },
+            {
+              "name": "salt, to taste (x1)",
+              "category": "Spices",
+              "emoji": "🌶️"
+            }
+          ],
+          "Condiments": [
+            {
+              "name": "1 tbsp olive oil (for steak) (x1)",
+              "category": "Condiments",
+              "emoji": "🍯"
+            },
+            {
+              "emoji": "🍯",
+              "category": "Condiments",
+              "name": "2 tbsp olive oil (for frites) (x1)"
+            }
+          ],
+          "Produce": [
+            {
+              "emoji": "🥬",
+              "name": "2 large russet potatoes (x1)",
+              "category": "Produce"
+            },
+            {
+              "name": "1 clove garlic, smashed (x1)",
+              "emoji": "🥬",
+              "category": "Produce"
+            },
+            {
+              "category": "Produce",
+              "emoji": "🥬",
+              "name": "1 sprig fresh rosemary or thyme (x1)"
+            }
+          ],
+          "Dairy": [
+            {
+              "emoji": "🥛",
+              "category": "Dairy",
+              "name": "1 tbsp unsalted butter (x1)"
+            }
+          ],
+          "Beverages": [
+            {
+              "emoji": "🥤",
+              "category": "Beverages",
+              "name": "water (x1)"
+            },
+            {
+              "name": "mistery meat (x1)",
+              "emoji": "🥤",
+              "category": "Beverages"
+            }
+          ],
+          "Meat": [
+            {
+              "emoji": "🥩",
+              "category": "Meat",
+              "name": "1 (10-12 oz) sirloin or ribeye steak, about 1-inch thick (x1)"
+            }
+          ]
+        }
+      }
+    },
+    "notes": {}
+  }
+}

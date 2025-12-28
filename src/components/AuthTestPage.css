@@ -1,0 +1,178 @@
+/* Authentication Test Page Styles */
+
+.auth-test-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-test-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.auth-test-container h1 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  text-align: center;
+}
+
+.test-credentials {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  text-align: center;
+  border: 2px solid #667eea;
+}
+
+.test-credentials strong {
+  color: #667eea;
+}
+
+.test-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.test-button {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.test-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.test-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.test-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.test-button-signup {
+  background-color: #4CAF50;
+}
+
+.test-button-signin {
+  background-color: #2196F3;
+}
+
+.test-button-signout {
+  background-color: #f44336;
+}
+
+.test-button-getuser {
+  background-color: #FF9800;
+}
+
+.test-button-all {
+  background-color: #9C27B0;
+  grid-column: 1 / -1;
+}
+
+.test-button-clear {
+  background-color: #757575;
+}
+
+.current-user-info {
+  background-color: #e3f2fd;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border-left: 4px solid #2196F3;
+}
+
+.current-user-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2196F3;
+}
+
+.current-user-info p {
+  margin: 0.25rem 0;
+  color: #333;
+}
+
+.test-results {
+  margin-top: 2rem;
+}
+
+.test-results h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.test-results-log {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1rem;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.test-result-line {
+  margin: 0.25rem 0;
+  word-wrap: break-word;
+}
+
+.test-result-line:contains('✅') {
+  color: #4CAF50;
+}
+
+.test-result-line:contains('❌') {
+  color: #f44336;
+}
+
+.test-result-line:contains('ℹ️') {
+  color: #FF9800;
+}
+
+.no-results {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Scrollbar styling */
+.test-results-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.test-results-log::-webkit-scrollbar-track {
+  background: #2d2d2d;
+  border-radius: 4px;
+}
+
+.test-results-log::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.test-results-log::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+

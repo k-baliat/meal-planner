@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously, onAuthStateChanged, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -29,19 +29,29 @@ export const collections = {
   recipes: 'recipes',
   mealPlans: 'mealPlans',
   shoppingLists: 'shoppingLists',
-  notes: 'notes'
+  notes: 'notes',
+  sharedRecipes: 'sharedRecipes', // For tracking recipe sharing between users
+  users: 'users' // User profiles collection
 };
 
 // Authentication state management
+// We use a callback-based approach to notify components when auth state changes
 let currentUser: User | null = null;
+let authStateListeners: Array<(user: User | null) => void> = [];
 
 // Set up authentication state observer
+// This runs whenever the authentication state changes (login, logout, token refresh)
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
+  // Notify all registered listeners about the auth state change
+  authStateListeners.forEach(listener => listener(user));
 });
 
 /**
  * Get the current authenticated user
+ * 
+ * This function returns the currently authenticated user.
+ * Returns null if no user is authenticated.
  * 
  * @returns The current authenticated user or null if not authenticated
  */
@@ -50,22 +60,57 @@ export const getCurrentUser = (): User | null => {
 };
 
 /**
- * Ensure Authentication
+ * Subscribe to Authentication State Changes
  * 
- * This function ensures the user is authenticated before making Firestore calls.
- * If not authenticated, it will attempt to sign in anonymously.
+ * This function allows components to listen for authentication state changes.
+ * It returns a cleanup function that should be called when the component unmounts.
  * 
- * @returns A promise that resolves when authentication is complete
+ * @param callback - Function to call when auth state changes
+ * @returns Cleanup function to unsubscribe
  */
-export const ensureAuthentication = async (): Promise<User> => {
-  const user = getCurrentUser();
-  if (user) return user;
+export const onAuthStateChange = (callback: (user: User | null) => void): (() => void) => {
+  // Add the callback to our listeners array
+  authStateListeners.push(callback);
+  
+  // Immediately call the callback with the current user state
+  callback(currentUser);
+  
+  // Return a cleanup function that removes this listener
+  return () => {
+    authStateListeners = authStateListeners.filter(listener => listener !== callback);
+  };
+};
 
+/**
+ * Sign Out
+ * 
+ * This function signs out the current user.
+ * 
+ * @returns A promise that resolves when sign out is complete
+ */
+export const signOut = async (): Promise<void> => {
   try {
-    const result = await signInAnonymously(auth);
-    return result.user;
+    await firebaseSignOut(auth);
+    console.log('User signed out successfully');
   } catch (error) {
-    console.error('Error signing in anonymously:', error);
+    console.error('Error signing out:', error);
     throw error;
   }
+};
+
+/**
+ * Require Authentication
+ * 
+ * This function ensures the user is authenticated before making Firestore calls.
+ * It throws an error if the user is not authenticated.
+ * 
+ * @returns The authenticated user
+ * @throws Error if user is not authenticated
+ */
+export const requireAuth = (): User => {
+  const user = getCurrentUser();
+  if (!user) {
+    throw new Error('User must be authenticated to perform this action');
+  }
+  return user;
 }; 

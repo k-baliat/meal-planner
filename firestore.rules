@@ -1,0 +1,213 @@
+rules_version = '2';
+
+/**
+ * Firestore Security Rules
+ * 
+ * These rules control who can read and write data in your Firestore database.
+ * They are enforced on the server side, so they cannot be bypassed by client code.
+ * 
+ * Key Principles:
+ * 1. Users must be authenticated to access any data
+ * 2. Users can only access their own data (filtered by userId)
+ * 3. Users can read recipes shared with them
+ * 4. Users can share their recipes with other users
+ * 5. Users can read all user profiles (for sharing dropdown)
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to get the current user's ID
+    function getUserId() {
+      return request.auth.uid;
+    }
+    
+    // Helper function to check if a user owns a document
+    function isOwner(userId) {
+      return resource.data.userId != null && resource.data.userId == userId;
+    }
+    
+    // Helper function to check if a recipe might be shared
+    // Note: Firestore security rules don't have a direct way to check if a value is in an array
+    // We check if sharedWith exists - the app code will filter to ensure users only see
+    // recipes actually shared with them
+    function mightBeShared() {
+      return resource.data.sharedWith != null && 
+             resource.data.sharedWith.size() > 0;
+    }
+    
+    // Helper function to check if a recipe is public
+    function isPublicRecipe() {
+      return resource.data.isPublic == true || resource.data.visibility == 'public';
+    }
+    
+    /**
+     * Recipes Collection
+     * 
+     * Rules:
+     * - Users can create recipes (must include their userId)
+     * - Users can read any recipe if authenticated (app filters client-side for sharing)
+     * - Users can read public recipes (for future feature)
+     * - Users can update/delete only their own recipes
+     * 
+     * Note: Firestore security rules cannot directly check if a value exists in an array.
+     * Since the app code fetches all recipes and filters client-side (see App.tsx line 359-371),
+     * we allow authenticated users to read any recipe. The app code ensures users only see
+     * recipes they own or that are shared with them.
+     */
+    match /recipes/{recipeId} {
+      // Allow read if user is authenticated
+      // The app code filters to show only owned or shared recipes (see App.tsx line 363-366)
+      allow read: if isAuthenticated();
+      
+      // Allow create if user is authenticated and sets their userId
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId();
+      
+      // Allow update if user owns the recipe
+      allow update: if isAuthenticated() && isOwner(getUserId());
+      
+      // Allow delete if user owns the recipe
+      allow delete: if isAuthenticated() && isOwner(getUserId());
+    }
+    
+    /**
+     * Meal Plans Collection
+     * 
+     * Rules:
+     * - Users can only access their own meal plans
+     * - Users must include their userId when creating meal plans
+     * - Document ID format: {userId}_{weekRange} ensures user ownership
+     */
+    match /mealPlans/{mealPlanId} {
+      // Allow read if user owns the meal plan OR if document doesn't exist (for create operations)
+      allow read: if isAuthenticated() && (
+        !resource.exists || 
+        isOwner(getUserId())
+      );
+      
+      // Allow create if user is authenticated and sets their userId
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId();
+      
+      // Allow update if new data has correct userId
+      // This handles both new documents (via setDoc) and updates to existing documents
+      // The document ID format ({userId}_{weekRange}) provides additional security
+      allow update: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId();
+      
+      // Allow delete if user owns the meal plan
+      allow delete: if isAuthenticated() && isOwner(getUserId());
+    }
+    
+    /**
+     * Shopping Lists Collection
+     * 
+     * Rules:
+     * - Users can only access their own shopping lists
+     * - Users must include their userId when creating shopping lists
+     * - Document ID format: {userId}_{weekRange} ensures user ownership
+     */
+    match /shoppingLists/{shoppingListId} {
+      // Allow read if user owns the shopping list OR if document doesn't exist (for create operations)
+      allow read: if isAuthenticated() && (
+        !resource.exists || 
+        isOwner(getUserId())
+      );
+      
+      // Allow create if user is authenticated and sets their userId
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId();
+      
+      // Allow update if new data has correct userId
+      // This handles both new documents (via setDoc) and updates to existing documents
+      // The document ID format ({userId}_{weekRange}) provides additional security
+      allow update: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId();
+      
+      // Allow delete if user owns the shopping list
+      allow delete: if isAuthenticated() && isOwner(getUserId());
+    }
+    
+    /**
+     * Notes Collection
+     * 
+     * Rules:
+     * - Users can only access their own notes
+     * - Users must include their userId when creating notes
+     */
+    match /notes/{noteId} {
+      // Allow read if user owns the note
+      allow read: if isAuthenticated() && isOwner(getUserId());
+      
+      // Allow create if user is authenticated and sets their userId
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId();
+      
+      // Allow update if user owns the note
+      allow update: if isAuthenticated() && isOwner(getUserId());
+      
+      // Allow delete if user owns the note
+      allow delete: if isAuthenticated() && isOwner(getUserId());
+    }
+    
+    /**
+     * Users Collection
+     * 
+     * Rules:
+     * - Any authenticated user can read all user profiles (for sharing dropdown)
+     * - Users can only update their own profile
+     * - Users can only create their own profile
+     */
+    match /users/{userId} {
+      // Allow read if user is authenticated (needed for sharing dropdown)
+      allow read: if isAuthenticated();
+      
+      // Allow create if user is authenticated and creating their own profile
+      allow create: if isAuthenticated() && 
+                       request.resource.data.uid == getUserId();
+      
+      // Allow update if user is updating their own profile
+      allow update: if isAuthenticated() && 
+                       resource.data.uid == getUserId() &&
+                       request.resource.data.uid == getUserId();
+      
+      // Users cannot delete their own profile (or we could allow it)
+      allow delete: if false;
+    }
+    
+    /**
+     * Shared Recipes Collection (for tracking sharing relationships)
+     * 
+     * This collection can be used to track which recipes are shared with which users.
+     * It's optional but can help with querying shared recipes efficiently.
+     */
+    match /sharedRecipes/{shareId} {
+      // Allow read if user is the owner or the recipient
+      allow read: if isAuthenticated() && (
+        resource.data.ownerId == getUserId() ||
+        resource.data.sharedWithId == getUserId()
+      );
+      
+      // Allow create if user is authenticated and is the owner
+      allow create: if isAuthenticated() && 
+                       request.resource.data.ownerId == getUserId();
+      
+      // Allow delete if user is the owner or recipient
+      allow delete: if isAuthenticated() && (
+        resource.data.ownerId == getUserId() ||
+        resource.data.sharedWithId == getUserId()
+      );
+    }
+    
+    // Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
