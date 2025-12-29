@@ -34,6 +34,101 @@ export const collections = {
   users: 'users' // User profiles collection
 };
 
+/**
+ * Validate if a user is properly authenticated
+ * 
+ * This function checks if a user has valid authentication credentials.
+ * It ensures the user:
+ * - Is not null
+ * - Has an email address (not anonymous)
+ * - Has a valid provider (not anonymous)
+ * 
+ * @param user - The user object to validate
+ * @returns true if user is properly authenticated, false otherwise
+ */
+const isValidAuthenticatedUser = (user: User | null): boolean => {
+  if (!user) {
+    return false;
+  }
+  
+  // Check if user has an email (anonymous users might not have one)
+  if (!user.email) {
+    console.warn('[Auth] User has no email address - potentially anonymous or invalid session');
+    return false;
+  }
+  
+  // Check if user's email is verified or if they have a provider
+  // Anonymous users typically don't have providerData
+  if (!user.providerData || user.providerData.length === 0) {
+    console.warn('[Auth] User has no provider data - potentially anonymous session');
+    return false;
+  }
+  
+  // Check that the user is not using anonymous provider
+  const hasNonAnonymousProvider = user.providerData.some(
+    provider => provider.providerId !== 'anonymous'
+  );
+  
+  if (!hasNonAnonymousProvider) {
+    console.warn('[Auth] User only has anonymous provider');
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Clear potentially corrupted authentication data from localStorage
+ * 
+ * This function removes old Firebase auth tokens that might be from
+ * anonymous sessions or corrupted auth states.
+ * 
+ * This is important because Firebase Auth persists authentication state
+ * in the browser's localStorage by default. If anonymous authentication
+ * was previously enabled and then disabled, old anonymous sessions
+ * might still exist in localStorage and cause issues.
+ */
+const clearPotentiallyCorruptedAuthData = () => {
+  try {
+    // Get all localStorage keys that match Firebase auth pattern
+    const keysToCheck = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('firebase:authUser:')) {
+        keysToCheck.push(key);
+      }
+    }
+    
+    // Check if any of these keys contain anonymous auth or invalid data
+    keysToCheck.forEach(key => {
+      const value = localStorage.getItem(key);
+      if (value) {
+        try {
+          const authData = JSON.parse(value);
+          // If user has no email or only anonymous provider, clear it
+          if (!authData.email || 
+              !authData.providerData || 
+              authData.providerData.length === 0 ||
+              authData.providerData.every((p: any) => p.providerId === 'anonymous')) {
+            console.warn('[Auth] Clearing potentially corrupted auth data from localStorage');
+            localStorage.removeItem(key);
+          }
+        } catch (e) {
+          // If we can't parse it, it might be corrupted - clear it
+          console.warn('[Auth] Clearing unparseable auth data from localStorage');
+          localStorage.removeItem(key);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[Auth] Error clearing localStorage:', error);
+  }
+};
+
+// Clear any potentially corrupted auth data on app initialization
+// This runs once when the firebase module is first imported
+clearPotentiallyCorruptedAuthData();
+
 // Authentication state management
 // We use a callback-based approach to notify components when auth state changes
 let currentUser: User | null = null;
@@ -41,10 +136,24 @@ let authStateListeners: Array<(user: User | null) => void> = [];
 
 // Set up authentication state observer
 // This runs whenever the authentication state changes (login, logout, token refresh)
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
+onAuthStateChanged(auth, async (user) => {
+  // Validate the user before accepting the auth state
+  if (user && !isValidAuthenticatedUser(user)) {
+    console.warn('[Auth] Invalid or anonymous user detected - signing out');
+    try {
+      // Sign out invalid users automatically
+      await firebaseSignOut(auth);
+      currentUser = null;
+    } catch (error) {
+      console.error('[Auth] Error signing out invalid user:', error);
+      currentUser = null;
+    }
+  } else {
+    currentUser = user;
+  }
+  
   // Notify all registered listeners about the auth state change
-  authStateListeners.forEach(listener => listener(user));
+  authStateListeners.forEach(listener => listener(currentUser));
 });
 
 /**
@@ -91,9 +200,9 @@ export const onAuthStateChange = (callback: (user: User | null) => void): (() =>
 export const signOut = async (): Promise<void> => {
   try {
     await firebaseSignOut(auth);
-    console.log('User signed out successfully');
+    console.log('[Auth] User signed out successfully');
   } catch (error) {
-    console.error('Error signing out:', error);
+    console.error('[Auth] Error signing out:', error);
     throw error;
   }
 };
@@ -102,14 +211,14 @@ export const signOut = async (): Promise<void> => {
  * Require Authentication
  * 
  * This function ensures the user is authenticated before making Firestore calls.
- * It throws an error if the user is not authenticated.
+ * It throws an error if the user is not authenticated or invalid.
  * 
  * @returns The authenticated user
- * @throws Error if user is not authenticated
+ * @throws Error if user is not authenticated or invalid
  */
 export const requireAuth = (): User => {
   const user = getCurrentUser();
-  if (!user) {
+  if (!user || !isValidAuthenticatedUser(user)) {
     throw new Error('User must be authenticated to perform this action');
   }
   return user;

@@ -3,16 +3,23 @@
  * 
  * Utility functions for logging recipe creation events.
  * Helps with debugging and monitoring recipe additions.
+ * 
+ * NOTE: All logging functions have been updated to remove sensitive information
+ * such as user IDs and email addresses. This logger now uses secure logging.
  */
+
+import { secureLog, secureWarn, secureError } from './secureLogger';
 
 /**
  * Log recipe creation attempt
+ * 
+ * @deprecated Use secureLog directly in App.tsx for better control
  */
 export const logRecipeCreationAttempt = (recipeData: {
   name: string;
   cuisine: string;
   ingredientCount: number;
-  userId: string;
+  userId?: string;
   userEmail?: string;
 }) => {
   const logEntry = {
@@ -22,49 +29,47 @@ export const logRecipeCreationAttempt = (recipeData: {
       name: recipeData.name,
       cuisine: recipeData.cuisine,
       ingredientCount: recipeData.ingredientCount
-    },
-    user: {
-      userId: recipeData.userId,
-      email: recipeData.userEmail || 'unknown'
     }
+    // Note: userId and userEmail are intentionally excluded for security
   };
   
-  console.log('[Recipe Logger]', JSON.stringify(logEntry, null, 2));
+  secureLog('[Recipe Logger]', logEntry);
   return logEntry;
 };
 
 /**
  * Log successful recipe creation
+ * 
+ * @deprecated Use secureLog directly in App.tsx for better control
  */
 export const logRecipeCreationSuccess = (recipeData: {
-  recipeId: string;
+  recipeId?: string;
   name: string;
   cuisine: string;
   tags: string[];
-  userId: string;
+  userId?: string;
   userEmail?: string;
 }) => {
   const logEntry = {
     event: 'RECIPE_CREATION_SUCCESS',
     timestamp: new Date().toISOString(),
     recipe: {
-      id: recipeData.recipeId,
+      // Note: recipeId excluded for security (Firebase document IDs can be sensitive)
       name: recipeData.name,
       cuisine: recipeData.cuisine,
-      tags: recipeData.tags
-    },
-    user: {
-      userId: recipeData.userId,
-      email: recipeData.userEmail || 'unknown'
+      tagsCount: recipeData.tags.length
     }
+    // Note: userId and userEmail are intentionally excluded for security
   };
   
-  console.log('[Recipe Logger]', JSON.stringify(logEntry, null, 2));
+  secureLog('[Recipe Logger]', logEntry);
   return logEntry;
 };
 
 /**
  * Log recipe creation error
+ * 
+ * @deprecated Use secureError directly in App.tsx for better control
  */
 export const logRecipeCreationError = (error: {
   message: string;
@@ -80,12 +85,12 @@ export const logRecipeCreationError = (error: {
       code: error.code || 'unknown'
     },
     context: {
-      recipeName: error.recipeName || 'unknown',
-      userId: error.userId || 'unknown'
+      recipeName: error.recipeName || 'unknown'
+      // Note: userId is intentionally excluded for security
     }
   };
   
-  console.error('[Recipe Logger]', JSON.stringify(logEntry, null, 2));
+  secureError('[Recipe Logger]', logEntry);
   return logEntry;
 };
 
@@ -102,7 +107,7 @@ export const logRecipeValidation = (validation: {
     timestamp: new Date().toISOString(),
     validation: {
       isValid: validation.isValid,
-      errors: validation.errors
+      errorsCount: validation.errors.length
     },
     recipe: {
       name: validation.recipeName
@@ -110,11 +115,10 @@ export const logRecipeValidation = (validation: {
   };
   
   if (!validation.isValid) {
-    console.warn('[Recipe Logger]', JSON.stringify(logEntry, null, 2));
+    secureWarn('[Recipe Logger]', logEntry);
   } else {
-    console.log('[Recipe Logger]', JSON.stringify(logEntry, null, 2));
+    secureLog('[Recipe Logger]', logEntry);
   }
   
   return logEntry;
 };
-

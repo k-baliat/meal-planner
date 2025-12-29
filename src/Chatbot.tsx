@@ -11,6 +11,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import promptsConfig from './prompts.json';
 import recipeFormatConfig from './recipe-format.json';
 
+// Import secure logging utilities
+import { secureLog, secureError } from './utils/secureLogger';
+
 // Import CSS for styling
 import './App.css';
 
@@ -35,6 +38,8 @@ interface Recipe {
   name: string;
   cuisine: string;
   ingredients: string[];
+  notes?: string; // Optional field for cooking instructions and additional notes
+  tags?: string[]; // Optional field for recipe tags
 }
 
 /**
@@ -148,8 +153,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
 
     try {
       // Debug: Log API key status (don't log the actual key for security)
-      console.log('API Key present:', !!apiKey);
-      console.log('Sending message:', userMessage);
+      secureLog('[Chatbot] API Key present:', !!apiKey);
+      secureLog('[Chatbot] Sending message:', userMessage);
       
       // Initialize the Gemini API client
       const genAI = new GoogleGenerativeAI(apiKey);
@@ -169,7 +174,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
         parts: [{ text: msg.content }]
       }));
 
-      console.log('Conversation history length:', conversationHistory.length);
+      secureLog('[Chatbot] Conversation history length:', conversationHistory.length);
 
       // Start a chat session with the conversation history
       // Include the system prompt in the first message if this is a new conversation
@@ -186,12 +191,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       });
 
       // Send the current message and get the response
-      console.log('Sending to Gemini API...');
+      secureLog('[Chatbot] Sending to Gemini API...');
       const result = await chat.sendMessage(enhancedUserMessage);
       const response = await result.response;
       const text = response.text();
       
-      console.log('Received response from Gemini API');
+      secureLog('[Chatbot] Received response from Gemini API');
 
       // Check if the response contains a recipe (look for common recipe indicators)
       // A recipe typically has both ingredients and instructions/steps
@@ -214,7 +219,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       }
     } catch (error: any) {
       // Handle any errors that occur during the API call
-      console.error('Error calling Gemini API:', error);
+      secureError('[Chatbot] Error calling Gemini API:', error);
       
       // Extract more detailed error information
       let errorMessage = '❌ Sorry, I encountered an error.';
@@ -289,6 +294,17 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       // Parse the JSON
       const recipeData: Recipe = JSON.parse(jsonText);
 
+      // Log the parsed recipe data for debugging (no sensitive data)
+      secureLog('[Chatbot] Parsed recipe from Gemini:', {
+        name: recipeData.name,
+        cuisine: recipeData.cuisine,
+        ingredientCount: recipeData.ingredients?.length,
+        hasNotes: !!recipeData.notes,
+        notesLength: recipeData.notes?.length,
+        hasTags: !!recipeData.tags,
+        tagsCount: recipeData.tags?.length
+      });
+
       // Validate the recipe data
       if (!recipeData.name || !recipeData.cuisine || !recipeData.ingredients || !Array.isArray(recipeData.ingredients)) {
         throw new Error('Invalid recipe format received from AI');
@@ -316,10 +332,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       }
 
       // Save directly to Firebase
+      // Include all fields from the parsed recipe data (notes and tags are optional)
       await onSaveRecipe({
         name: recipeData.name,
         cuisine: recipeData.cuisine,
-        ingredients: recipeData.ingredients
+        ingredients: recipeData.ingredients,
+        notes: recipeData.notes, // Include cooking instructions and notes
+        tags: recipeData.tags // Include recipe tags
       });
 
       setMessages(prev => [...prev, {
@@ -330,7 +349,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       // Clear the last recipe response
       setLastRecipeResponse(null);
     } catch (error: any) {
-      console.error('Error formatting/saving recipe:', error);
+      secureError('[Chatbot] Error formatting/saving recipe:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: `❌ Sorry, I couldn't save the recipe. ${error.message || 'Please try again.'}`

@@ -16,6 +16,9 @@ import {
 import { auth, db, collections } from '../firebase';
 import { doc, setDoc, serverTimestamp, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
+// Import secure logging utilities
+import { secureLog, secureError } from '../utils/secureLogger';
+
 // Import CSS for styling
 import './Auth.css';
 
@@ -83,7 +86,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
       const querySnapshot = await getDocs(usernameQuery);
       return !querySnapshot.empty;
     } catch (error) {
-      console.error('Error checking username:', error);
+      secureError('[Auth] Error checking username:', error);
       // If there's an error checking, we'll allow it to proceed (fail open)
       // This prevents blocking signups if there's a temporary Firestore issue
       return false;
@@ -170,7 +173,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           return;
         }
       } catch (error) {
-        console.error('Error checking username uniqueness:', error);
+        secureError('[Auth] Error checking username uniqueness:', error);
         setError('Unable to verify username availability. Please try again.');
         setIsLoading(false);
         return;
@@ -184,7 +187,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
         // Create a new user account
         // createUserWithEmailAndPassword returns a promise with user credentials
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log('User account created successfully');
+        secureLog('[Auth] User account created successfully');
         
         // Create user profile in Firestore users collection
         try {
@@ -198,16 +201,16 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
             createdAt: serverTimestamp(),
             lastActiveAt: serverTimestamp()
           });
-          console.log('User profile created in Firestore');
+          secureLog('[Auth] User profile created in Firestore');
         } catch (profileError) {
           // Log error but don't block authentication if profile creation fails
-          console.error('Error creating user profile:', profileError);
+          secureError('[Auth] Error creating user profile:', profileError);
         }
       } else {
         // Sign in to an existing account
         // signInWithEmailAndPassword returns a promise with user credentials
         userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log('User signed in successfully');
+        secureLog('[Auth] User signed in successfully');
         
         // Check if user profile exists, create if it doesn't (for existing users)
         try {
@@ -225,7 +228,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
               createdAt: serverTimestamp(),
               lastActiveAt: serverTimestamp()
             });
-            console.log('User profile created for existing user');
+            secureLog('[Auth] User profile created for existing user');
           } else {
             // Update lastActiveAt for existing profile
             await setDoc(userProfileRef, {
@@ -234,7 +237,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
           }
         } catch (profileError) {
           // Log error but don't block authentication if profile update fails
-          console.error('Error updating user profile:', profileError);
+          secureError('[Auth] Error updating user profile:', profileError);
         }
       }
       
@@ -252,7 +255,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
       }
     } catch (error: any) {
       // Handle authentication errors
-      console.error('Authentication error:', error);
+      secureError('[Auth] Authentication error:', error);
       
       // Firebase provides specific error codes that we can use to show helpful messages
       let errorMessage = 'An error occurred. Please try again.';

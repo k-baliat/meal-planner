@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 
 // Import Firebase and Firestore functions
 import { db, collections, requireAuth, onAuthStateChange, signOut } from './firebase';
+
+// Import secure logging utilities
+import { secureLog, secureWarn, secureError } from './utils/secureLogger';
 import { 
   collection, 
   addDoc, 
@@ -194,7 +197,14 @@ const App: React.FC = () => {
   useEffect(() => {
     // Subscribe to authentication state changes
     const unsubscribe = onAuthStateChange((currentUser) => {
-      setUser(currentUser);
+      // Additional client-side validation: ensure user has email
+      // This is a safety check in case any invalid auth state slips through
+      if (currentUser && !currentUser.email) {
+        secureWarn('[App] User without email detected - treating as unauthenticated');
+        setUser(null);
+      } else {
+        setUser(currentUser);
+      }
       setAuthLoading(false);
     });
     
@@ -228,7 +238,7 @@ const App: React.FC = () => {
         setUserProfile(null);
       }
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      secureError('[App] Error loading user profile:', error);
       setUserProfile(null);
     }
   };
@@ -249,7 +259,7 @@ const App: React.FC = () => {
   // This hook monitors user activity and automatically signs out inactive users
   useAutoLogout(30, () => {
     // Optional: You can add a notification here when auto-logout occurs
-    console.log('User was automatically logged out due to inactivity');
+    secureLog('[App] User was automatically logged out due to inactivity');
   });
   
   // Close dropdown when clicking outside
@@ -528,14 +538,16 @@ const App: React.FC = () => {
       const userId = currentUser.uid;
       const userEmail = currentUser.email || 'unknown';
       
-      // Log recipe creation attempt
-      console.log('[Recipe Creation] Starting recipe save:', {
+      // Log recipe creation attempt (sanitized - no sensitive user data)
+      secureLog('[Recipe Creation] Starting recipe save:', {
         name: recipe.name,
         cuisine: recipe.cuisine,
         ingredientCount: recipe.ingredients.length,
-        userId: userId,
-        userEmail: userEmail,
-        manualTags: manualTags,
+        hasNotes: !!recipe.notes,
+        notesLength: recipe.notes?.length || 0,
+        hasTags: !!recipe.tags,
+        tagsCount: recipe.tags?.length || 0,
+        manualTagsCount: manualTags?.length || 0,
         timestamp: new Date().toISOString()
       });
       
@@ -553,10 +565,11 @@ const App: React.FC = () => {
       // Combine manual tags with auto-generated tags
       const autoTags = generateRecipeTags(recipe);
       const allTags = Array.from(new Set([...(manualTags || []), ...autoTags])); // Remove duplicates
-      console.log('[Recipe Creation] Generated tags:', {
-        autoTags: autoTags,
-        manualTags: manualTags || [],
-        combinedTags: allTags
+      secureLog('[Recipe Creation] Generated tags:', {
+        autoTagsCount: autoTags.length,
+        manualTagsCount: manualTags?.length || 0,
+        totalTags: allTags.length,
+        tags: allTags
       });
       
       // Add the user ID and tags to the recipe before saving
@@ -571,20 +584,20 @@ const App: React.FC = () => {
       // Save to Firestore
       const docRef = await addDoc(collection(db, collections.recipes), recipeWithUserId);
       
-      // Log successful creation
-      console.log('[Recipe Creation] ✅ Recipe saved successfully:', {
-        recipeId: docRef.id,
+      // Log successful creation (sanitized - no document IDs or user IDs)
+      secureLog('[Recipe Creation] ✅ Recipe saved successfully:', {
         name: recipe.name,
         cuisine: recipe.cuisine,
-        userId: userId,
-        tags: allTags,
+        hasNotes: !!recipe.notes,
+        notesLength: recipe.notes?.length || 0,
+        tagsCount: allTags.length,
         timestamp: new Date().toISOString()
       });
       
       return { id: docRef.id, tags: allTags };
     } catch (error: any) {
-      // Enhanced error logging
-      console.error('[Recipe Creation] ❌ Error saving recipe to Firestore:', {
+      // Enhanced error logging (sanitized)
+      secureError('[Recipe Creation] ❌ Error saving recipe to Firestore:', {
         error: error.message,
         code: error.code,
         recipeName: recipe.name,
@@ -880,10 +893,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       };
       
       if (existingDoc.exists()) {
-        console.log('[Meal Plan] Updating existing meal plan:', docId);
+        secureLog('[Meal Plan] Updating existing meal plan');
       } else {
         mealPlanWithUserId.createdAt = serverTimestamp();
-        console.log('[Meal Plan] Creating new meal plan:', docId);
+        secureLog('[Meal Plan] Creating new meal plan');
       }
       
       await setDoc(docRef, mealPlanWithUserId);
@@ -971,9 +984,9 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       
       if (!existingDoc.exists()) {
         shoppingListData.createdAt = serverTimestamp();
-        console.log('[Shopping List] Creating new shopping list:', docId);
+        secureLog('[Shopping List] Creating new shopping list');
       } else {
-        console.log('[Shopping List] Updating existing shopping list:', docId);
+        secureLog('[Shopping List] Updating existing shopping list');
       }
       
       // Use setDoc with merge to update or create the document
@@ -1265,9 +1278,9 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             weekRange: selectedWeek,
             userId: userId
         }, { merge: true });
-          console.log(`[Shopping List] Updated checked items for week ${selectedWeek} (user: ${userId})`);
+          secureLog(`[Shopping List] Updated checked items for week ${selectedWeek}`);
         } catch (error) {
-          console.error('Error saving checked items:', error);
+          secureError('[Shopping List] Error saving checked items:', error);
         }
       }
       return newChecked;
@@ -1961,7 +1974,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
               emailsMap[ownerId] = userData.email;
             }
           } catch (error) {
-            console.error('Error loading user email:', error);
+            secureError('[App] Error loading user email:', error);
             emailsMap[ownerId] = 'Unknown User';
           }
         }
@@ -3413,15 +3426,15 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             const userId = currentUser.uid;
             const docId = `${userId}_${selectedWeek}`;
             const shoppingListRef = doc(db, collections.shoppingLists, docId);
-          setDoc(shoppingListRef, {
-            checkedItems: Array.from(newChecked),
-              weekRange: selectedWeek,
-              userId: userId
-          }, { merge: true });
-            console.log(`[Shopping List] Updated checked items for week ${selectedWeek} (user: ${userId})`);
-          } catch (error) {
-            console.error('Error saving checked items:', error);
-          }
+        setDoc(shoppingListRef, {
+          checkedItems: Array.from(newChecked),
+            weekRange: selectedWeek,
+            userId: userId
+        }, { merge: true });
+          secureLog(`[Shopping List] Updated checked items for week ${selectedWeek}`);
+        } catch (error) {
+          secureError('[Shopping List] Error saving checked items:', error);
+        }
         }
         return newChecked;
       });
