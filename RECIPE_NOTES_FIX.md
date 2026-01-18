@@ -316,3 +316,7 @@ Test these scenarios:
 
 The cooking instructions are now properly saved to the `notes` field in Firebase. The fix was simple but critical - we just needed to pass the `notes` and `tags` fields from the chatbot to the save function. The Gemini AI was already correctly generating these fields; they just weren't being saved.
 
+
+
+
+

@@ -254,3 +254,7 @@ The filter layout adapts to different screen sizes:
 - Sufficient color contrast
 - Touch-friendly tap targets on mobile
 
+
+
+
+

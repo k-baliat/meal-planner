@@ -162,6 +162,27 @@ const TAG_SUGGESTIONS = {
 };
 
 /**
+ * Helper function to remove duplicate recipes based on ID
+ * 
+ * When using Firestore real-time listeners, duplicates can sometimes occur
+ * if state is manually updated before the listener triggers.
+ * This function ensures each recipe ID appears only once.
+ * 
+ * @param recipes - Array of recipes that may contain duplicates
+ * @returns Array of unique recipes (first occurrence kept)
+ */
+const deduplicateRecipes = (recipes: Recipe[]): Recipe[] => {
+  const seenIds = new Set<string>();
+  return recipes.filter(recipe => {
+    if (!recipe.id || seenIds.has(recipe.id)) {
+      return false;
+    }
+    seenIds.add(recipe.id);
+    return true;
+  });
+};
+
+/**
  * App Component - The main component of our application
  * 
  * In React, we build UIs using components. Components are reusable pieces of code
@@ -581,8 +602,17 @@ const App: React.FC = () => {
         updatedAt: serverTimestamp()
       };
       
+      // Remove undefined fields before saving to Firestore
+      // Firestore doesn't allow undefined values - they must be omitted entirely
+      const cleanedRecipe = Object.entries(recipeWithUserId).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as Record<string, any>);
+      
       // Save to Firestore
-      const docRef = await addDoc(collection(db, collections.recipes), recipeWithUserId);
+      const docRef = await addDoc(collection(db, collections.recipes), cleanedRecipe);
       
       // Log successful creation (sanitized - no document IDs or user IDs)
       secureLog('[Recipe Creation] ✅ Recipe saved successfully:', {
@@ -1533,8 +1563,8 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       ? recipes.filter(recipe => recipe.cuisine === selectedCuisine)
       : recipes;
 
-    // Sort filtered recipes alphabetically
-    const sortedRecipes = [...filteredRecipes].sort((a, b) => a.name.localeCompare(b.name));
+    // Remove duplicates and sort filtered recipes alphabetically
+    const sortedRecipes = deduplicateRecipes(filteredRecipes).sort((a, b) => a.name.localeCompare(b.name));
 
     /**
      * Auto-save meal plan to Firestore
@@ -2128,21 +2158,32 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
           
           // Update in Firestore
           const recipeRef: DocumentReference<DocumentData> = doc(db, collections.recipes, editingRecipe.id);
-          await updateDoc(recipeRef, {
+          
+          // Build update object and remove undefined fields
+          // Firestore doesn't allow undefined values - they must be omitted entirely
+          const updateData: Record<string, any> = {
             name: localRecipeName.trim(),
             cuisine: localCuisine,
             ingredients: localIngredients,
-            notes: localRecipeNotes.trim() || undefined,
-            tags: allTags.length > 0 ? allTags : null,
             updatedAt: serverTimestamp()
-          });
+          };
           
-          // Update local state
-          setRecipes(prevRecipes => 
-            prevRecipes.map(recipe => 
-              recipe.id === editingRecipe.id ? updatedRecipe : recipe
-            )
-          );
+          // Only add notes if not empty
+          const trimmedNotes = localRecipeNotes.trim();
+          if (trimmedNotes) {
+            updateData.notes = trimmedNotes;
+          }
+          
+          // Only add tags if there are any
+          if (allTags.length > 0) {
+            updateData.tags = allTags;
+          }
+          
+          await updateDoc(recipeRef, updateData);
+          
+          // Note: We don't manually update the recipes state here because
+          // the Firestore real-time listener (onSnapshot) will automatically
+          // detect the changes and update the state. This prevents sync issues.
           
           // Reset editing state
           setEditingRecipe(null);
@@ -2157,23 +2198,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
           };
 
           // Save with manual tags
-          const { id: newRecipeId, tags: savedTags } = await saveRecipeToFirestore(recipe, localRecipeTags);
-          
-          // Get the userId for the new recipe
-          const currentUser = requireAuth();
-          const userId = currentUser.uid;
-          
-          const newRecipe: Recipe = {
-            id: newRecipeId,
-            name: localRecipeName.trim(),
-            cuisine: localCuisine,
-            ingredients: localIngredients,
-            userId: userId,
-            notes: localRecipeNotes.trim() || undefined,
-            tags: savedTags.length > 0 ? savedTags : undefined
-          };
-          
-          setRecipes(prevRecipes => [...prevRecipes, newRecipe]);
+          // Note: We don't manually update the recipes state here because
+          // the Firestore real-time listener (onSnapshot) will automatically
+          // detect the new recipe and update the state. This prevents duplicate entries.
+          await saveRecipeToFirestore(recipe, localRecipeTags);
         }
         
         // Reset form but stay on Add New Recipe tab
@@ -2271,23 +2299,33 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         
         // Update in Firestore
         const recipeRef: DocumentReference<DocumentData> = doc(db, collections.recipes, selectedMyRecipe.id);
-        await updateDoc(recipeRef, {
+        
+        // Build update object and remove undefined fields
+        // Firestore doesn't allow undefined values - they must be omitted entirely
+        const updateData: Record<string, any> = {
           name: localRecipeName.trim(),
           cuisine: localCuisine,
           ingredients: localIngredients,
-          notes: localRecipeNotes.trim() || undefined,
-          tags: allTags.length > 0 ? allTags : null,
           updatedAt: serverTimestamp()
-        });
+        };
         
-        // Update local state
-        setRecipes(prevRecipes => 
-          prevRecipes.map(recipe => 
-            recipe.id === selectedMyRecipe.id ? updatedRecipe : recipe
-          )
-        );
+        // Only add notes if not empty
+        const trimmedNotes = localRecipeNotes.trim();
+        if (trimmedNotes) {
+          updateData.notes = trimmedNotes;
+        }
         
-        // Update selectedMyRecipe to reflect changes
+        // Only add tags if there are any
+        if (allTags.length > 0) {
+          updateData.tags = allTags;
+        }
+        
+        await updateDoc(recipeRef, updateData);
+        
+        // Note: We don't manually update the recipes state here because
+        // the Firestore real-time listener (onSnapshot) will automatically
+        // detect the changes and update the state. This prevents sync issues.
+        // We do update selectedMyRecipe so the UI reflects changes immediately
         setSelectedMyRecipe(updatedRecipe);
         
         setRecipeSaved(true);
@@ -2349,8 +2387,8 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       ? viewRecipes.filter(recipe => recipe.cuisine === selectedCuisine)
       : viewRecipes;
 
-    // Sort filtered recipes alphabetically
-    const sortedRecipes = [...filteredRecipes].sort((a, b) => a.name.localeCompare(b.name));
+    // Remove duplicates and sort filtered recipes alphabetically
+    const sortedRecipes = deduplicateRecipes(filteredRecipes).sort((a, b) => a.name.localeCompare(b.name));
 
     return (
       <div className="recipe-library">
@@ -2688,8 +2726,8 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             ? userRecipes.filter(recipe => recipe.cuisine === selectedCuisine)
             : userRecipes;
           
-          // Sort recipes alphabetically by name
-          const sortedUserRecipes = [...filteredByCuisine].sort((a, b) => 
+          // Remove duplicates and sort recipes alphabetically by name
+          const sortedUserRecipes = deduplicateRecipes(filteredByCuisine).sort((a, b) => 
             a.name.localeCompare(b.name)
           );
           
@@ -3168,8 +3206,8 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             );
           }
           
-          // Sort recipes alphabetically by name
-          const sortedSharedRecipes = [...sharedRecipes].sort((a, b) => 
+          // Remove duplicates and sort recipes alphabetically by name
+          const sortedSharedRecipes = deduplicateRecipes(sharedRecipes).sort((a, b) => 
             a.name.localeCompare(b.name)
           );
           
