@@ -376,7 +376,7 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
                   maxLength={20}
                   required
                 />
-                <small style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.25rem', display: 'block' }}>
+                <small className="auth-help-text">
                   Letters, numbers, and underscores only
                 </small>
               </div>

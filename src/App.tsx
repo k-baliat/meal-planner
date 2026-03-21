@@ -1,6 +1,6 @@
 // Import React and useState hook from the React library
 // React is the core library, while useState is a "hook" that lets us add state to functional components
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Import Firebase and Firestore functions
 import { db, collections, requireAuth, onAuthStateChange, signOut } from './firebase';
@@ -1418,6 +1418,15 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+    // Sync displayed month with selectedDate when it changes.
+    // This keeps the calendar on the selected month when choosing a past or future date,
+    // instead of resetting to the current month (which happened when Calendar remounted on App re-render).
+    useEffect(() => {
+      setCurrentMonth(selectedDate.getMonth());
+      setCurrentYear(selectedDate.getFullYear());
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- selectedDate from parent; sync displayed month when user selects any date
+    }, [selectedDate]);
+
     const handlePreviousMonth = () => {
       if (currentMonth === 0) {
         setCurrentMonth(11);
@@ -1819,14 +1828,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       <div className="recipe-details-view">
         <div className="recipe-details-header">
           <h2 className="recipe-details-title">{recipe.name}</h2>
-          <div style={{ 
-            padding: '0.5rem 1rem', 
-            backgroundColor: '#e3f2fd', 
-            borderRadius: '6px',
-            fontSize: '0.85rem',
-            color: '#1976d2',
-            fontWeight: 500
-          }}>
+          <div className="shared-recipe-label">
             Shared Recipe (Read-only)
           </div>
         </div>
@@ -2788,14 +2790,14 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                 <div className="recipe-details-view">
                   <div className="recipe-details-header">
                     <h2 className="recipe-details-title">{selectedMyRecipe.name}</h2>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div className="recipe-details-actions">
                       <button 
                         className="share-recipe-button"
                         onClick={() => setIsShareModalOpen(true)}
                         type="button"
                         title="Share this recipe with other users"
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem' }}>
+                        <svg className="share-recipe-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="18" cy="5" r="3"></circle>
                           <circle cx="6" cy="12" r="3"></circle>
                           <circle cx="18" cy="19" r="3"></circle>
@@ -3332,120 +3334,260 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
     const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
     // Add categorized ingredients state
     const [categorizedIngredients, setCategorizedIngredients] = useState<CategorizedIngredients>({});
+    const [remoteUpdatedItems, setRemoteUpdatedItems] = useState<Set<string>>(new Set());
+    const scrollPositionRef = useRef<number>(0);
+    const localMutationRef = useRef(false);
+    const localMutationTimeoutRef = useRef<number | null>(null);
+    const remoteHighlightTimeoutRef = useRef<number | null>(null);
+    const currentIngredientsHashRef = useRef<string>('');
+    const previousCheckedItemsRef = useRef<Set<string>>(new Set());
+    const previousMiscItemsRef = useRef<string[]>([]);
+
+    const markLocalMutation = () => {
+      localMutationRef.current = true;
+      if (localMutationTimeoutRef.current) {
+        window.clearTimeout(localMutationTimeoutRef.current);
+      }
+      localMutationTimeoutRef.current = window.setTimeout(() => {
+        localMutationRef.current = false;
+      }, 500);
+    };
+
+    useEffect(() => {
+      let ticking = false;
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            scrollPositionRef.current = window.scrollY;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Load ingredients, misc items, checked items, and categorized ingredients when week selection or recipes change
     // This ensures the shopping list updates when recipes are loaded or updated
     useEffect(() => {
+      let isActive = true;
+      let unsubscribeShoppingList: (() => void) | null = null;
+
       const loadItems = async () => {
         if (!selectedWeek) {
           setIngredients([]);
           setMiscItems([]);
           setCheckedItems(new Set());
           setCategorizedIngredients({});
+          setRemoteUpdatedItems(new Set());
+          currentIngredientsHashRef.current = '';
+          previousCheckedItemsRef.current = new Set();
+          previousMiscItemsRef.current = [];
           return;
         }
 
         setLoading(true);
         try {
           const aggregatedIngredients = await getAggregatedIngredients();
+          if (!isActive) return;
           setIngredients(aggregatedIngredients);
           
-          // Load misc items, checked items, and categorized ingredients from Firestore for the selected week (user-specific)
+          const currentHash = calculateIngredientsHash(aggregatedIngredients);
+          currentIngredientsHashRef.current = currentHash;
+
+          // Shopping list sharing note:
+          // With the current {userId}_{selectedWeek} key format, real-time sharing across
+          // separate accounts is not possible unless both devices authenticate as the same user.
           const currentUser = requireAuth();
           const userId = currentUser.uid;
           const docId = `${userId}_${selectedWeek}`;
           const shoppingListRef = doc(db, collections.shoppingLists, docId);
-          const shoppingListDoc = await getDoc(shoppingListRef);
-          
-          if (shoppingListDoc.exists()) {
-            const data = shoppingListDoc.data();
-            setMiscItems(data.miscItems || []);
-            // Load checkedItems from Firestore, default to [] if not present
-            setCheckedItems(new Set(data.checkedItems || []));
-            
-            // Check if we have cached categorization
-            const currentHash = calculateIngredientsHash(aggregatedIngredients);
-            const cachedHash = data.ingredientsHash;
-            const cachedCategorized = data.categorizedIngredients;
-            
-            if (cachedHash === currentHash && cachedCategorized) {
-              // Use cached categorization - no API call needed
-              console.log('[Shopping List] Using cached categorization');
-              setCategorizedIngredients(cachedCategorized);
-            } else if (aggregatedIngredients.length > 0) {
-              // Ingredients changed or no cache - need to categorize
-              console.log('[Shopping List] Categorizing ingredients with Gemini AI');
-              setCategorizing(true);
-              try {
-                const categorized = await categorizeIngredientsWithGemini(aggregatedIngredients);
-                setCategorizedIngredients(categorized);
-                
-                // Save to Firestore for future use
-                await setDoc(shoppingListRef, {
-                  categorizedIngredients: categorized,
-                  ingredientsHash: currentHash,
-                  weekRange: selectedWeek,
-                  userId: userId
-                }, { merge: true });
-                console.log('[Shopping List] Saved categorized ingredients to Firestore');
-              } catch (error) {
-                console.error('Error categorizing ingredients:', error);
-                // On error, set empty categorization (will show uncategorized)
-                setCategorizedIngredients({});
-              } finally {
-                setCategorizing(false);
+
+          let didInitializeCategorization = false;
+          unsubscribeShoppingList = onSnapshot(shoppingListRef, async (snapshot) => {
+            if (!isActive) return;
+            const data = snapshot.exists() ? snapshot.data() : {};
+
+            if (!didInitializeCategorization) {
+              didInitializeCategorization = true;
+              if (snapshot.exists()) {
+                const cachedHash = data.ingredientsHash;
+                const cachedCategorized = data.categorizedIngredients;
+
+                if (cachedHash === currentHash && cachedCategorized) {
+                  console.log('[Shopping List] Using cached categorization');
+                  setCategorizedIngredients(cachedCategorized);
+                } else if (aggregatedIngredients.length > 0) {
+                  console.log('[Shopping List] Categorizing ingredients with Gemini AI');
+                  setCategorizing(true);
+                  try {
+                    const categorized = await categorizeIngredientsWithGemini(aggregatedIngredients);
+                    if (!isActive) return;
+                    setCategorizedIngredients(categorized);
+
+                    await setDoc(shoppingListRef, {
+                      categorizedIngredients: categorized,
+                      ingredientsHash: currentHash,
+                      weekRange: selectedWeek,
+                      userId: userId
+                    }, { merge: true });
+                    console.log('[Shopping List] Saved categorized ingredients to Firestore');
+                  } catch (error) {
+                    console.error('Error categorizing ingredients:', error);
+                    setCategorizedIngredients({});
+                  } finally {
+                    if (isActive) {
+                      setCategorizing(false);
+                    }
+                  }
+                } else {
+                  setCategorizedIngredients({});
+                }
+              } else {
+                setMiscItems([]);
+                setCheckedItems(new Set());
+                previousCheckedItemsRef.current = new Set();
+                previousMiscItemsRef.current = [];
+
+                if (aggregatedIngredients.length > 0) {
+                  console.log('[Shopping List] First time categorizing ingredients');
+                  setCategorizing(true);
+                  try {
+                    const categorized = await categorizeIngredientsWithGemini(aggregatedIngredients);
+                    if (!isActive) return;
+                    setCategorizedIngredients(categorized);
+
+                    await setDoc(shoppingListRef, {
+                      categorizedIngredients: categorized,
+                      ingredientsHash: currentHash,
+                      miscItems: [],
+                      checkedItems: [],
+                      weekRange: selectedWeek,
+                      userId: userId
+                    }, { merge: true });
+                    console.log('[Shopping List] Saved categorized ingredients to Firestore');
+                  } catch (error) {
+                    console.error('Error categorizing ingredients:', error);
+                    setCategorizedIngredients({});
+                  } finally {
+                    if (isActive) {
+                      setCategorizing(false);
+                    }
+                  }
+                } else {
+                  setCategorizedIngredients({});
+                }
               }
-            } else {
-              // No ingredients to categorize
-              setCategorizedIngredients({});
-            }
-          } else {
-            // No shopping list document exists yet
-            setMiscItems([]);
-            setCheckedItems(new Set());
-            
-            // If we have ingredients, categorize them
-            if (aggregatedIngredients.length > 0) {
-              console.log('[Shopping List] First time categorizing ingredients');
-              setCategorizing(true);
-              try {
-                const categorized = await categorizeIngredientsWithGemini(aggregatedIngredients);
-                setCategorizedIngredients(categorized);
-                
-                // Save to Firestore
-                const currentHash = calculateIngredientsHash(aggregatedIngredients);
-                await setDoc(shoppingListRef, {
-                  categorizedIngredients: categorized,
-                  ingredientsHash: currentHash,
-                  miscItems: [],
-                  checkedItems: [],
-                  weekRange: selectedWeek,
-                  userId: userId
-                }, { merge: true });
-                console.log('[Shopping List] Saved categorized ingredients to Firestore');
-              } catch (error) {
-                console.error('Error categorizing ingredients:', error);
-                setCategorizedIngredients({});
-              } finally {
-                setCategorizing(false);
+              if (isActive) {
+                setLoading(false);
               }
-            } else {
-              setCategorizedIngredients({});
             }
-          }
+
+            if (!snapshot.exists()) return;
+
+            // Guard: if ingredients hash changed, meal-plan sync should drive full reload.
+            // We skip checked/misc sync here to avoid double-processing and recategorization loops.
+            if (data.ingredientsHash !== currentIngredientsHashRef.current) return;
+
+            const savedScroll = scrollPositionRef.current;
+            const incomingCheckedItems = new Set<string>(Array.isArray(data.checkedItems) ? data.checkedItems : []);
+            const incomingMiscItems = Array.isArray(data.miscItems) ? data.miscItems : [];
+
+            if (!localMutationRef.current) {
+              const changedItems = new Set<string>();
+              const previousCheckedItems = previousCheckedItemsRef.current;
+              const previousMiscItems = previousMiscItemsRef.current;
+
+              const checkedCandidates = new Set<string>([
+                ...Array.from(previousCheckedItems),
+                ...Array.from(incomingCheckedItems)
+              ]);
+              checkedCandidates.forEach((itemName) => {
+                if (previousCheckedItems.has(itemName) !== incomingCheckedItems.has(itemName)) {
+                  changedItems.add(itemName);
+                }
+              });
+
+              const previousMiscSet = new Set(previousMiscItems);
+              const incomingMiscSet = new Set(incomingMiscItems);
+              const miscCandidates = new Set<string>([
+                ...Array.from(previousMiscSet),
+                ...Array.from(incomingMiscSet)
+              ]);
+              miscCandidates.forEach((itemName) => {
+                if (previousMiscSet.has(itemName) !== incomingMiscSet.has(itemName)) {
+                  changedItems.add(itemName);
+                }
+              });
+
+              if (changedItems.size > 0) {
+                setRemoteUpdatedItems(changedItems);
+                if (remoteHighlightTimeoutRef.current) {
+                  window.clearTimeout(remoteHighlightTimeoutRef.current);
+                }
+                remoteHighlightTimeoutRef.current = window.setTimeout(() => {
+                  setRemoteUpdatedItems(new Set());
+                }, 800);
+              }
+            }
+
+            setCheckedItems(incomingCheckedItems);
+            setMiscItems(incomingMiscItems);
+            previousCheckedItemsRef.current = incomingCheckedItems;
+            previousMiscItemsRef.current = incomingMiscItems;
+
+            requestAnimationFrame(() => {
+              window.scrollTo({ top: savedScroll, behavior: 'instant' as ScrollBehavior });
+            });
+          }, (error) => {
+            console.error('Error subscribing to shopping list updates:', error);
+            if (isActive) {
+              setLoading(false);
+            }
+          });
         } catch (error) {
           console.error('Error loading items:', error);
           setIngredients([]);
           setMiscItems([]);
           setCheckedItems(new Set());
           setCategorizedIngredients({});
-        } finally {
           setLoading(false);
         }
       };
 
       loadItems();
+
+      return () => {
+        isActive = false;
+        if (unsubscribeShoppingList) {
+          unsubscribeShoppingList();
+        }
+      };
     }, [selectedWeek, recipes.length]); // Include recipes.length to refresh when recipes change
+
+    useEffect(() => {
+      return () => {
+        if (localMutationTimeoutRef.current) {
+          window.clearTimeout(localMutationTimeoutRef.current);
+        }
+        if (remoteHighlightTimeoutRef.current) {
+          window.clearTimeout(remoteHighlightTimeoutRef.current);
+        }
+      };
+    }, []);
+
+    const getShoppingItemRowClassName = (itemName: string) => {
+      const classNames: string[] = [];
+      if (checkedItems.has(itemName)) {
+        classNames.push('checked');
+      }
+      if (remoteUpdatedItems.has(itemName)) {
+        classNames.push('remote-updated');
+      }
+      return classNames.join(' ');
+    };
 
     // Handler for toggling checked state of an item
     const handleToggleCheckedItem = async (item: string) => {
@@ -3457,6 +3599,8 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         } else {
           newChecked.add(item);
         }
+        previousCheckedItemsRef.current = newChecked;
+
         // Save to Firestore in the background (user-specific)
         if (selectedWeek) {
           try {
@@ -3464,64 +3608,101 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             const userId = currentUser.uid;
             const docId = `${userId}_${selectedWeek}`;
             const shoppingListRef = doc(db, collections.shoppingLists, docId);
-        setDoc(shoppingListRef, {
-          checkedItems: Array.from(newChecked),
-            weekRange: selectedWeek,
-            userId: userId
-        }, { merge: true });
-          secureLog(`[Shopping List] Updated checked items for week ${selectedWeek}`);
-        } catch (error) {
-          secureError('[Shopping List] Error saving checked items:', error);
-        }
+            markLocalMutation();
+            setDoc(shoppingListRef, {
+              checkedItems: Array.from(newChecked),
+              weekRange: selectedWeek,
+              userId: userId
+            }, { merge: true })
+              .then(() => {
+                secureLog(`[Shopping List] Updated checked items for week ${selectedWeek}`);
+              })
+              .catch((error) => {
+                secureError('[Shopping List] Error saving checked items:', error);
+                setCheckedItems(currentCheckedItems => {
+                  const revertedChecked = new Set(currentCheckedItems);
+                  if (revertedChecked.has(item)) {
+                    revertedChecked.delete(item);
+                  } else {
+                    revertedChecked.add(item);
+                  }
+                  previousCheckedItemsRef.current = revertedChecked;
+                  return revertedChecked;
+                });
+              });
+          } catch (error) {
+            secureError('[Shopping List] Error saving checked items:', error);
+          }
         }
         return newChecked;
       });
     };
 
-    const handleAddMiscItem = async () => {
+    const handleAddMiscItem = () => {
       if (!miscItem.trim() || !selectedWeek) return;
+
+      const itemToAdd = miscItem.trim();
+      const previousMiscItems = miscItems;
+      const newMiscItems = [...miscItems, itemToAdd];
+      setMiscItems(newMiscItems);
+      previousMiscItemsRef.current = newMiscItems;
+      setMiscItem('');
 
       try {
         const currentUser = requireAuth();
         const userId = currentUser.uid;
-        const newMiscItems = [...miscItems, miscItem.trim()];
-        
+
         // Save to Firestore (user-specific)
         const docId = `${userId}_${selectedWeek}`;
         const shoppingListRef = doc(db, collections.shoppingLists, docId);
-        await setDoc(shoppingListRef, {
+        markLocalMutation();
+        setDoc(shoppingListRef, {
           miscItems: newMiscItems,
           weekRange: selectedWeek,
           userId: userId
-        }, { merge: true });
-        
-        setMiscItems(newMiscItems);
-        setMiscItem('');
+        }, { merge: true }).catch((error) => {
+          console.error('Error adding misc item:', error);
+          setMiscItems(previousMiscItems);
+          previousMiscItemsRef.current = previousMiscItems;
+          setMiscItem(itemToAdd);
+        });
       } catch (error) {
         console.error('Error adding misc item:', error);
+        setMiscItems(previousMiscItems);
+        previousMiscItemsRef.current = previousMiscItems;
+        setMiscItem(itemToAdd);
       }
     };
 
-    const handleRemoveMiscItem = async (index: number) => {
+    const handleRemoveMiscItem = (index: number) => {
       if (!selectedWeek) return;
+
+      const previousMiscItems = miscItems;
+      const newMiscItems = miscItems.filter((_, i) => i !== index);
+      setMiscItems(newMiscItems);
+      previousMiscItemsRef.current = newMiscItems;
 
       try {
         const currentUser = requireAuth();
         const userId = currentUser.uid;
-        const newMiscItems = miscItems.filter((_, i) => i !== index);
-        
+
         // Update Firestore (user-specific)
         const docId = `${userId}_${selectedWeek}`;
         const shoppingListRef = doc(db, collections.shoppingLists, docId);
-        await setDoc(shoppingListRef, {
+        markLocalMutation();
+        setDoc(shoppingListRef, {
           miscItems: newMiscItems,
           weekRange: selectedWeek,
           userId: userId
-        }, { merge: true });
-        
-        setMiscItems(newMiscItems);
+        }, { merge: true }).catch((error) => {
+          console.error('Error removing misc item:', error);
+          setMiscItems(previousMiscItems);
+          previousMiscItemsRef.current = previousMiscItems;
+        });
       } catch (error) {
         console.error('Error removing misc item:', error);
+        setMiscItems(previousMiscItems);
+        previousMiscItemsRef.current = previousMiscItems;
       }
     };
 
@@ -3620,7 +3801,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                               </h5>
                               <ul className="category-ingredients-list">
                                 {items.map((item, index) => (
-                                  <li key={`${category}-${index}`} className={checkedItems.has(item.name) ? 'checked' : ''}>
+                                  <li key={`${category}-${index}`} className={getShoppingItemRowClassName(item.name)}>
                                     <label className="shopping-item-label">
                                       <input
                                         type="checkbox"
@@ -3639,7 +3820,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                           // Fallback: display as flat list if categorization failed or not available
                           <ul>
                             {ingredients.map((ingredient) => (
-                              <li key={ingredient} className={checkedItems.has(ingredient) ? 'checked' : ''}>
+                              <li key={ingredient} className={getShoppingItemRowClassName(ingredient)}>
                                 <label className="shopping-item-label">
                                   <input
                                     type="checkbox"
@@ -3662,7 +3843,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                         <h4>Miscellaneous Items</h4>
                         <ul>
                           {miscItems.map((item, index) => (
-                            <li key={index} className={checkedItems.has(item) ? 'checked' : ''}>
+                            <li key={`${item}-${index}`} className={getShoppingItemRowClassName(item)}>
                               <label className="shopping-item-label">
                                 <input
                                   type="checkbox"
@@ -3743,14 +3924,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
   if (authLoading) {
     return (
       <div className="App">
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh',
-          fontSize: '18px',
-          color: '#666'
-        }}>
+        <div className="app-loading-screen">
           Loading...
         </div>
       </div>
@@ -3798,28 +3972,16 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         </div>
         
         {/* Display the current date and user info in the banner */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: 'auto', marginRight: '20px' }}>
+        <div className="banner-meta">
           <p className="banner-date">{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
           
           {/* User Dropdown */}
-          <div className="user-dropdown-container" style={{ position: 'relative' }}>
+          <div className="user-dropdown-container">
             <button
               onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
               className="user-dropdown-button"
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
             >
-              <span>👤</span>
+              <span className="user-dropdown-icon">👤</span>
               <span>
                 {userProfile?.username 
                   ? `@${userProfile.username}` 
@@ -3831,36 +3993,20 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             </button>
           
           {isUserDropdownOpen && (
-            <div className="user-dropdown-menu" style={{
-              position: 'absolute',
-              top: '100%',
-              right: '0',
-              marginTop: '4px',
-              backgroundColor: 'white',
-              border: '1px solid var(--border-color)',
-              borderRadius: '4px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-              minWidth: '200px',
-              zIndex: 1000
-            }}>
-              <div className="user-dropdown-header" style={{
-                padding: '12px 16px',
-                borderBottom: '1px solid var(--border-color)',
-                backgroundColor: 'var(--secondary-color)',
-                color: 'var(--text-color)'
-              }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '4px', color: 'var(--text-color)' }}>
+            <div className="user-dropdown-menu">
+              <div className="user-dropdown-header">
+                <div className="user-dropdown-username">
                   {userProfile?.username 
                     ? `@${userProfile.username}` 
                     : user?.email || 'User'}
                 </div>
                 {userProfile?.firstName && userProfile?.lastName && (
-                  <div style={{ fontSize: '0.85rem', color: '#666' }}>
+                  <div className="user-dropdown-secondary">
                     {userProfile.firstName} {userProfile.lastName}
                   </div>
                 )}
                 {!userProfile?.firstName && user?.email && (
-                  <div style={{ fontSize: '0.85rem', color: '#666' }}>{user.email}</div>
+                  <div className="user-dropdown-secondary">{user.email}</div>
                 )}
               </div>
               <button
@@ -3869,20 +4015,6 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                   setIsManageAccountOpen(true);
                 }}
                 className="user-dropdown-item"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  backgroundColor: 'transparent',
-                  color: 'var(--text-color)',
-                  border: 'none',
-                  borderTop: '1px solid var(--border-color)',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  textAlign: 'left',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
               >
                 <span>⚙️</span>
                 <span>Manage Account</span>
@@ -3892,21 +4024,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                   setIsUserDropdownOpen(false);
                   await handleSignOut();
                 }}
-                className="user-dropdown-item"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  backgroundColor: 'transparent',
-                  color: '#d32f2f',
-                  border: 'none',
-                  borderTop: '1px solid var(--border-color)',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  textAlign: 'left',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
+                className="user-dropdown-item user-dropdown-item-danger"
               >
                 <span>🚪</span>
                 <span>Sign Out</span>
@@ -3982,6 +4100,30 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         onClose={() => setIsManageAccountOpen(false)}
         user={user}
       />
+
+      <footer className="app-footer">
+        <div className="app-footer-grid">
+          <div className="app-footer-column">
+            <h4>K&N Meal Planner</h4>
+            <p>Plan meals, organize recipes, and build better grocery lists.</p>
+          </div>
+          <div className="app-footer-column">
+            <h5>Plan</h5>
+            <span>Meal Planner</span>
+            <span>Shopping List</span>
+          </div>
+          <div className="app-footer-column">
+            <h5>Cook</h5>
+            <span>Recipe Library</span>
+            <span>Shared Recipes</span>
+          </div>
+          <div className="app-footer-column">
+            <h5>Account</h5>
+            <span>Manage Account</span>
+            <span>Help & Support</span>
+          </div>
+        </div>
+      </footer>
       
     </div>
   );

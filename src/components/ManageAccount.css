@@ -1,12 +1,9 @@
-/* Manage Account Modal Styles */
+/* Manage Account Modal - HelloFresh-inspired */
 
 .manage-account-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,182 +13,161 @@
 }
 
 .manage-account-modal {
-  background: white;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 16px;
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  animation: modalFadeIn 0.3s ease-out;
-}
-
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
 }
 
 .manage-account-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  border-bottom: 2px solid var(--border-color);
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: 12px 12px 0 0;
+  padding: 24px;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .manage-account-header h2 {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1c1c1c;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
-.close-modal-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2rem;
+.manage-account-overlay .close-modal-button {
+  background: transparent;
+  border: 1px solid #e8e8e8;
+  color: #6b6b6b;
+  font-size: 1.2rem;
   cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
 }
 
-.close-modal-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.manage-account-overlay .close-modal-button:hover {
+  background-color: #fafaf8;
+  color: #1c1c1c;
 }
 
 .manage-account-form {
-  padding: 2rem;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   overflow-y: auto;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  font-weight: 500;
-  color: var(--text-color);
-  font-size: 0.95rem;
+.manage-account-form .form-group label {
+  font-weight: 600;
+  color: #6b6b6b;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .manage-account-input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
   font-size: 1rem;
-  background-color: white;
-  transition: border-color 0.2s;
+  font-family: inherit;
 }
 
 .manage-account-input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  border-color: #2c9e4b;
+  box-shadow: 0 0 0 3px rgba(44, 158, 75, 0.18);
 }
 
 .manage-account-input:disabled {
-  background-color: #f5f5f5;
-  color: #666;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.form-help-text {
-  font-size: 0.85rem;
-  color: #666;
+.manage-account-form .form-help-text {
+  font-size: 0.82rem;
+  color: #6b6b6b;
   margin-top: 0.25rem;
 }
 
-.error-message {
+.manage-account-form .error-message,
+.manage-account-form .success-message {
   padding: 0.75rem 1rem;
-  background-color: #fee;
-  color: #c33;
-  border-radius: 6px;
-  border: 1px solid #fcc;
+  border-radius: 8px;
   font-size: 0.9rem;
 }
 
-.success-message {
-  padding: 0.75rem 1rem;
-  background-color: #efe;
-  color: #3c3;
-  border-radius: 6px;
-  border: 1px solid #cfc;
-  font-size: 0.9rem;
+.manage-account-form .error-message {
+  background-color: #fff5f5;
+  color: #c0392b;
+  border: 1px solid rgba(192, 57, 43, 0.2);
 }
 
-.form-buttons {
+.manage-account-form .success-message {
+  background-color: #eaf6ee;
+  color: #2c9e4b;
+  border: 1px solid rgba(44, 158, 75, 0.3);
+}
+
+.manage-account-form .form-buttons {
   display: flex;
   gap: 1rem;
   margin-top: 0.5rem;
 }
 
-.save-button {
+.manage-account-form .save-button {
   flex: 1;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary-color);
+  padding: 12px 24px;
+  background-color: #2c9e4b;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.save-button:hover:not(:disabled) {
-  background-color: var(--hover-color);
+.manage-account-form .save-button:hover:not(:disabled) {
+  background-color: #25843f;
 }
 
-.save-button:disabled {
-  background-color: #cccccc;
+.manage-account-form .save-button:disabled {
+  background-color: #cfcfcf;
   cursor: not-allowed;
 }
 
-.cancel-button {
+.manage-account-form .cancel-button {
   flex: 1;
-  padding: 0.75rem 1.5rem;
-  background-color: #f5f5f5;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  padding: 12px 24px;
+  background: transparent;
+  color: #2c9e4b;
+  border: 1.5px solid #2c9e4b;
+  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.cancel-button:hover:not(:disabled) {
-  background-color: #e5e5e5;
+.manage-account-form .cancel-button:hover:not(:disabled) {
+  background-color: #eaf6ee;
 }
 
-.cancel-button:disabled {
+.manage-account-form .cancel-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-
-
-
-
+@media (max-width: 768px) {
+  .manage-account-modal {
+    border-radius: 16px;
+    max-height: 100vh;
+  }
+}

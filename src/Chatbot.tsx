@@ -29,6 +29,20 @@ interface Message {
 }
 
 /**
+ * Attachment Interface
+ *
+ * Stores one uploaded image or video that can be sent
+ * together with the user's text prompt.
+ */
+interface Attachment {
+  fileName: string;
+  mimeType: string;
+  base64Data: string;
+  previewUrl: string;
+  kind: 'image' | 'video';
+}
+
+/**
  * Recipe Interface
  * 
  * This matches the Recipe interface from App.tsx
@@ -90,6 +104,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
   // State to store the current input text
   // This is what the user types in the input field
   const [input, setInput] = useState('');
+  const [attachment, setAttachment] = useState<Attachment | null>(null);
 
   // State to track if we're currently waiting for an API response
   // This helps us show a loading indicator
@@ -98,6 +113,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
   // Reference to the messages container div
   // We use this to automatically scroll to the bottom when new messages arrive
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
+
+  // Keep uploads reasonably small for mobile memory usage and API reliability.
+  const MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024; // 20 MB
 
   /**
    * Auto-scroll to Bottom
@@ -108,6 +127,110 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  /**
+   * Cleanup attachment preview URL
+   *
+   * Revoke object URLs to avoid memory leaks.
+   */
+  useEffect(() => {
+    return () => {
+      if (attachment?.previewUrl) {
+        URL.revokeObjectURL(attachment.previewUrl);
+      }
+    };
+  }, [attachment]);
+
+  /**
+   * Convert File -> Base64
+   *
+   * Gemini inlineData expects raw base64 content, without data URL prefix.
+   */
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result !== 'string') {
+          reject(new Error('Could not read file'));
+          return;
+        }
+        const base64 = result.split(',')[1];
+        if (!base64) {
+          reject(new Error('Invalid file encoding'));
+          return;
+        }
+        resolve(base64);
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+
+  /**
+   * Remove current attachment
+   */
+  const clearAttachment = () => {
+    if (attachment?.previewUrl) {
+      URL.revokeObjectURL(attachment.previewUrl);
+    }
+    setAttachment(null);
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.value = '';
+    }
+  };
+
+  /**
+   * Handle file upload
+   *
+   * Accepts one image or video and stores it for the next send action.
+   */
+  const handleAttachmentChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+
+    if (!isImage && !isVideo) {
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: '❌ Please upload an image or video file only.'
+      }]);
+      return;
+    }
+
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: '❌ File is too large. Please upload a file smaller than 20 MB.'
+      }]);
+      return;
+    }
+
+    try {
+      const base64Data = await fileToBase64(file);
+      const previewUrl = URL.createObjectURL(file);
+
+      // Replace old attachment safely.
+      if (attachment?.previewUrl) {
+        URL.revokeObjectURL(attachment.previewUrl);
+      }
+
+      setAttachment({
+        fileName: file.name,
+        mimeType: file.type,
+        base64Data,
+        previewUrl,
+        kind: isImage ? 'image' : 'video'
+      });
+    } catch (error: any) {
+      secureError('[Chatbot] Attachment processing failed:', error);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: `❌ I couldn't process that file. ${error?.message || 'Please try another file.'}`
+      }]);
+    }
+  };
 
   /**
    * Send Message Function
@@ -123,8 +246,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
    * 6. Handle any errors that occur
    */
   const sendMessage = async () => {
-    // Don't send empty messages or if already loading
-    if (!input.trim() || isLoading) return;
+    // Don't send empty content or if already loading
+    if ((!input.trim() && !attachment) || isLoading) return;
 
     // Get the API key from environment variables
     // REACT_APP_ prefix is required for Create React App to expose env variables
@@ -141,12 +264,18 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
 
     // Store the user's message
     const userMessage = input.trim();
+    const userHasText = userMessage.length > 0;
+    const hasAttachment = !!attachment;
+    const attachmentLabel = hasAttachment
+      ? `\n\n📎 Uploaded ${attachment?.kind}: ${attachment?.fileName}`
+      : '';
+    const userDisplayMessage = `${userHasText ? userMessage : 'Please extract the recipe from this upload.'}${attachmentLabel}`;
     
     // Clear the input field first
     setInput('');
     
     // Add user message to chat immediately for responsive UI
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages(prev => [...prev, { role: 'user', content: userDisplayMessage }]);
     
     // Set loading state to true
     setIsLoading(true);
@@ -154,7 +283,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
     try {
       // Debug: Log API key status (don't log the actual key for security)
       secureLog('[Chatbot] API Key present:', !!apiKey);
-      secureLog('[Chatbot] Sending message:', userMessage);
+      secureLog('[Chatbot] Sending message:', userDisplayMessage);
       
       // Initialize the Gemini API client
       const genAI = new GoogleGenerativeAI(apiKey);
@@ -179,11 +308,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       // Start a chat session with the conversation history
       // Include the system prompt in the first message if this is a new conversation
       const systemPrompt = promptsConfig.systemPrompt;
-      let enhancedUserMessage = userMessage;
+      let enhancedUserMessage = userHasText ? userMessage : 'Please extract the recipe from this uploaded content.';
       
       // If this is the first message, prepend the system prompt
       if (conversationHistory.length === 0) {
-        enhancedUserMessage = `${systemPrompt}\n\nUser question: ${userMessage}`;
+        enhancedUserMessage = `${systemPrompt}\n\nUser question: ${enhancedUserMessage}`;
       }
 
       const chat = model.startChat({
@@ -192,7 +321,21 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
 
       // Send the current message and get the response
       secureLog('[Chatbot] Sending to Gemini API...');
-      const result = await chat.sendMessage(enhancedUserMessage);
+      const userParts: Array<
+        string |
+        { text: string } |
+        { inlineData: { data: string; mimeType: string } }
+      > = [{ text: enhancedUserMessage }];
+      if (attachment) {
+        userParts.push({
+          inlineData: {
+            data: attachment.base64Data,
+            mimeType: attachment.mimeType
+          }
+        });
+      }
+
+      const result = await chat.sendMessage(userParts);
       const response = await result.response;
       const text = response.text();
       
@@ -217,6 +360,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
       } else {
         setLastRecipeResponse(null);
       }
+
+      // Clear the attachment only after a successful send.
+      clearAttachment();
     } catch (error: any) {
       // Handle any errors that occur during the API call
       secureError('[Chatbot] Error calling Gemini API:', error);
@@ -365,7 +511,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
    * This function allows users to submit messages by pressing Enter.
    * It prevents the default form submission behavior.
    */
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -447,24 +593,57 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onSaveRecipe, existi
 
         {/* Input Container */}
         <div className="chatbot-input-container">
-          <input
-            type="text"
+          <textarea
             className="chatbot-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything about cooking, recipes, or meal planning..."
+            placeholder="Add a prompt and/or upload an image/video to extract a recipe..."
             disabled={isLoading}
+            rows={2}
           />
+          <input
+            ref={attachmentInputRef}
+            type="file"
+            accept="image/*,video/*"
+            className="chatbot-hidden-file-input"
+            onChange={handleAttachmentChange}
+            aria-label="Upload image or video"
+          />
+          <button
+            type="button"
+            className="chatbot-upload-button"
+            onClick={() => attachmentInputRef.current?.click()}
+            disabled={isLoading}
+            aria-label="Upload image or video"
+            title="Upload image or video"
+          >
+            📎
+          </button>
           <button
             className="chatbot-send-button"
             onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
+            disabled={(!input.trim() && !attachment) || isLoading}
             aria-label="Send message"
           >
             <span className="send-icon">➤</span>
           </button>
         </div>
+        {attachment && (
+          <div className="chatbot-attachment-preview">
+            <div className="chatbot-attachment-label">
+              {attachment.kind === 'image' ? '🖼️' : '🎥'} {attachment.fileName}
+            </div>
+            <button
+              type="button"
+              className="chatbot-attachment-remove"
+              onClick={clearAttachment}
+              aria-label="Remove uploaded file"
+            >
+              Remove
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

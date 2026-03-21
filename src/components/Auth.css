@@ -1,97 +1,92 @@
-/* Auth Container - Centers the authentication card on the page */
+/* Auth - HelloFresh-inspired */
+
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: #fafaf8;
+  padding: 24px;
 }
 
-/* Auth Card - The main container for the login/signup form */
 .auth-card {
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
   padding: 40px;
   width: 100%;
-  max-width: 400px;
-  animation: fadeIn 0.3s ease-in;
+  max-width: 430px;
 }
 
-/* Fade in animation for the auth card */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Auth Header - Contains the title and subtitle */
 .auth-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 30px;
 }
 
 .auth-header h1 {
-  color: #333;
-  margin: 0 0 10px 0;
-  font-size: 28px;
-  font-weight: 600;
+  color: #1c1c1c;
+  margin: 0 0 8px;
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .auth-subtitle {
-  color: #666;
+  color: #6b6b6b;
   margin: 0;
-  font-size: 14px;
+  font-size: 0.95rem;
 }
 
-/* Auth Form - Container for all form elements */
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
-/* Form Group - Wrapper for each input field and label */
-.form-group {
+.auth-form .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
-  color: #333;
-  font-size: 14px;
-  font-weight: 500;
+.auth-form .form-group label {
+  color: #6b6b6b;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-/* Auth Input - Styling for text inputs */
 .auth-input {
-  padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.2s;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
   box-sizing: border-box;
 }
 
 .auth-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2c9e4b;
+  box-shadow: 0 0 0 3px rgba(44, 158, 75, 0.18);
 }
 
 .auth-input:disabled {
-  background-color: #f5f5f5;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Password Input Container - Allows for password visibility toggle */
+.auth-help-text {
+  font-size: 0.82rem;
+  color: #6b6b6b;
+  margin-top: 0.25rem;
+  display: block;
+}
+
 .password-input-container {
   position: relative;
   display: flex;
@@ -108,14 +103,13 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1.125rem;
   padding: 4px;
-  color: #666;
-  transition: color 0.2s;
+  color: #6b6b6b;
 }
 
 .password-toggle:hover {
-  color: #333;
+  color: #1c1c1c;
 }
 
 .password-toggle:disabled {
@@ -123,27 +117,25 @@
   opacity: 0.5;
 }
 
-/* Auth Button - The main submit button */
 .auth-button {
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 24px;
+  background-color: #2c9e4b;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  margin-top: 10px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  margin-top: 6px;
 }
 
 .auth-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  background-color: #25843f;
 }
 
 .auth-button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(1px);
 }
 
 .auth-button:disabled {
@@ -151,39 +143,34 @@
   cursor: not-allowed;
 }
 
-/* Error Message - Styling for error alerts */
-.error-message {
+.auth-container .error-message {
   padding: 12px;
-  background-color: #fee;
-  border: 1px solid #fcc;
+  background-color: #fff5f5;
+  border: 1px solid rgba(192, 57, 43, 0.2);
   border-radius: 8px;
-  color: #c33;
-  font-size: 14px;
-  text-align: center;
+  color: #c0392b;
+  font-size: 0.95rem;
 }
 
-/* Auth Footer - Contains the toggle between signup and login */
 .auth-footer {
   margin-top: 20px;
-  text-align: center;
-  color: #666;
-  font-size: 14px;
+  color: #6b6b6b;
+  font-size: 0.95rem;
 }
 
 .auth-link-button {
   background: none;
   border: none;
-  color: #667eea;
+  color: #2c9e4b;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.95rem;
   font-weight: 600;
-  text-decoration: underline;
+  text-decoration: none;
   padding: 0;
-  transition: color 0.2s;
 }
 
 .auth-link-button:hover:not(:disabled) {
-  color: #764ba2;
+  color: #25843f;
 }
 
 .auth-link-button:disabled {
@@ -191,14 +178,12 @@
   cursor: not-allowed;
 }
 
-/* Responsive Design - Adjust styles for smaller screens */
 @media (max-width: 480px) {
   .auth-card {
-    padding: 30px 20px;
+    padding: 28px 22px;
   }
 
   .auth-header h1 {
-    font-size: 24px;
+    font-size: 1.65rem;
   }
 }
-

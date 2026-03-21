@@ -2,7 +2,7 @@
 
 .auth-test-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #fafaf8;
   padding: 2rem;
   display: flex;
   justify-content: center;
@@ -10,54 +10,54 @@
 }
 
 .auth-test-container {
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
   padding: 2rem;
-  max-width: 800px;
+  max-width: 900px;
   width: 100%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
 }
 
 .auth-test-container h1 {
-  margin: 0 0 1rem 0;
-  color: #333;
-  text-align: center;
+  margin: 0 0 1rem;
+  color: #1c1c1c;
+  text-align: left;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .test-credentials {
-  background-color: #f5f5f5;
+  background-color: #eaf6ee;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 2rem;
-  text-align: center;
-  border: 2px solid #667eea;
+  color: #2c9e4b;
+  border: 1px solid rgba(44, 158, 75, 0.3);
 }
 
 .test-credentials strong {
-  color: #667eea;
+  color: #1c1c1c;
 }
 
 .test-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }
 
 .test-button {
-  padding: 0.75rem 1rem;
-  border: none;
+  padding: 12px 16px;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .test-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .test-button:active:not(:disabled) {
@@ -69,47 +69,42 @@
   cursor: not-allowed;
 }
 
-.test-button-signup {
-  background-color: #4CAF50;
+.test-button-signup,
+.test-button-signin,
+.test-button-all {
+  background: #2c9e4b;
+  border: none;
+  color: #ffffff;
 }
 
-.test-button-signin {
-  background-color: #2196F3;
-}
-
-.test-button-signout {
-  background-color: #f44336;
-}
-
-.test-button-getuser {
-  background-color: #FF9800;
+.test-button-signout,
+.test-button-getuser,
+.test-button-clear {
+  border: 1.5px solid #2c9e4b;
+  color: #2c9e4b;
+  background: transparent;
 }
 
 .test-button-all {
-  background-color: #9C27B0;
   grid-column: 1 / -1;
 }
 
-.test-button-clear {
-  background-color: #757575;
-}
-
 .current-user-info {
-  background-color: #e3f2fd;
+  background: #ffffff;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 2rem;
-  border-left: 4px solid #2196F3;
+  border: 1px solid #e8e8e8;
 }
 
 .current-user-info h3 {
-  margin: 0 0 0.5rem 0;
-  color: #2196F3;
+  margin: 0 0 0.5rem;
+  color: #1c1c1c;
 }
 
 .current-user-info p {
   margin: 0.25rem 0;
-  color: #333;
+  color: #6b6b6b;
 }
 
 .test-results {
@@ -117,18 +112,18 @@
 }
 
 .test-results h3 {
-  margin: 0 0 1rem 0;
-  color: #333;
+  margin: 0 0 1rem;
+  color: #1c1c1c;
 }
 
 .test-results-log {
-  background-color: #1e1e1e;
-  color: #d4d4d4;
+  background-color: #1c1c1c;
+  color: #f0f0f0;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
   max-height: 400px;
   overflow-y: auto;
-  font-family: 'Courier New', monospace;
+  font-family: ui-monospace, Menlo, Monaco, Consolas, 'Courier New', monospace;
   font-size: 0.875rem;
   line-height: 1.6;
 }
@@ -138,41 +133,30 @@
   word-wrap: break-word;
 }
 
-.test-result-line:contains('✅') {
-  color: #4CAF50;
-}
-
-.test-result-line:contains('❌') {
-  color: #f44336;
-}
-
-.test-result-line:contains('ℹ️') {
-  color: #FF9800;
-}
-
 .no-results {
-  color: #888;
+  color: #b8b8b8;
   font-style: italic;
   text-align: center;
   padding: 2rem;
 }
 
-/* Scrollbar styling */
 .test-results-log::-webkit-scrollbar {
   width: 8px;
 }
 
 .test-results-log::-webkit-scrollbar-track {
-  background: #2d2d2d;
+  background: #323232;
   border-radius: 4px;
 }
 
 .test-results-log::-webkit-scrollbar-thumb {
-  background: #555;
+  background: #5a5a5a;
   border-radius: 4px;
 }
 
-.test-results-log::-webkit-scrollbar-thumb:hover {
-  background: #666;
+@media (max-width: 768px) {
+  .test-buttons {
+    grid-template-columns: 1fr;
+  }
 }
 
