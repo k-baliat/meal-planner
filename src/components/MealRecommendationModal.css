@@ -1,0 +1,239 @@
+.meal-recommendation-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.meal-recommendation-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 980px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.meal-recommendation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px;
+  border-bottom: 1px solid #e8e8e8;
+  gap: 1rem;
+}
+
+.meal-recommendation-header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1c1c1c;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+}
+
+.meal-recommendation-subtitle {
+  margin: 0.4rem 0 0 0;
+  color: #6b6b6b;
+  font-size: 0.92rem;
+}
+
+.meal-recommendation-close {
+  background: transparent;
+  border: 1px solid #e8e8e8;
+  color: #6b6b6b;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.meal-recommendation-close:hover {
+  background-color: #fafaf8;
+  color: #1c1c1c;
+}
+
+.meal-recommendation-content {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.meal-recommendation-grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.meal-recommendation-grid-header h3 {
+  margin: 0;
+  color: #1c1c1c;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.meal-recommendation-refresh {
+  border: 1.5px solid #2c9e4b;
+  background: transparent;
+  color: #2c9e4b;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.meal-recommendation-refresh:hover:not(:disabled) {
+  background-color: #eaf6ee;
+}
+
+.meal-recommendation-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.meal-recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.meal-recommendation-card {
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.meal-recommendation-card:hover:not(:disabled) {
+  border-color: #2c9e4b;
+  box-shadow: 0 6px 18px rgba(44, 158, 75, 0.14);
+}
+
+.meal-recommendation-card:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.meal-recommendation-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.meal-recommendation-image-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #fafaf8;
+}
+
+.meal-recommendation-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.meal-recommendation-body {
+  padding: 0.85rem;
+}
+
+.meal-recommendation-body h3 {
+  margin: 0 0 0.6rem 0;
+  color: #1c1c1c;
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.meal-recommendation-cuisine {
+  display: inline-block;
+  padding: 0.24rem 0.7rem;
+  background-color: #eaf6ee;
+  color: #2c9e4b;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.meal-recommendation-meta {
+  margin: 0.6rem 0 0 0;
+  color: #6b6b6b;
+  font-size: 0.84rem;
+}
+
+.meal-recommendation-tags {
+  margin: 0.6rem 0 0 0;
+  color: #2c9e4b;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.meal-recommendation-empty {
+  padding: 1rem;
+  background-color: #fafaf8;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  color: #6b6b6b;
+}
+
+.meal-recommendation-empty-text {
+  margin: 0.5rem 0 0 0;
+  color: #6b6b6b;
+}
+
+.meal-recommendation-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 24px 24px 24px;
+  border-top: 1px solid #e8e8e8;
+}
+
+@media (max-width: 900px) {
+  .meal-recommendation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .meal-recommendation-modal {
+    max-height: 100vh;
+    border-radius: 16px;
+  }
+
+  .meal-recommendation-header,
+  .meal-recommendation-content,
+  .meal-recommendation-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .meal-recommendation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .meal-recommendation-actions {
+    flex-direction: column;
+  }
+
+  .meal-recommendation-actions .save-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

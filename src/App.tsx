@@ -44,6 +44,7 @@ import ManageAccount from './components/ManageAccount';
 
 // Import the ShareRecipeModal component
 import ShareRecipeModal from './components/ShareRecipeModal';
+import DayMealModal from './components/MealRecommendationModal';
 
 // Import the auto-logout hook
 import { useAutoLogout } from './hooks/useAutoLogout';
@@ -355,6 +356,8 @@ const App: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedMeal, setSelectedMeal] = useState<string>('');
   const [savedMessage, setSavedMessage] = useState<string>('');
+  const [isDayMealModalOpen, setIsDayMealModalOpen] = useState(false);
+  const [dayMealTargetDate, setDayMealTargetDate] = useState<Date | null>(null);
   
   // Recipe state
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -1144,6 +1147,69 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       setSelectedMeal('');
     }
   };
+
+  /**
+   * Save selected meals for a specific date using the existing meal-plan format.
+   *
+   * This keeps Firestore writes consistent with the current autosave behavior:
+   * document id format: {userId}_{weekRange}
+   * day value format: comma-joined recipe IDs
+   */
+  const saveMealsForDate = async (date: Date, mealIds: string[]) => {
+    const weekRange = getWeekRange(date);
+    const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
+
+    // Get existing meal plan for this week
+    const currentUser = requireAuth();
+    const userId = currentUser.uid;
+    const docId = `${userId}_${weekRange}`;
+    const mealPlanRef = doc(db, collections.mealPlans, docId);
+    const mealPlanDoc = await getDoc(mealPlanRef);
+    const existingPlan = mealPlanDoc.exists() ? mealPlanDoc.data() as WeeklyMealPlan : null;
+
+    const updatedPlan = {
+      ...(existingPlan || {}),
+      [dayOfWeek]: mealIds.join(',')
+    };
+
+    // Remove userId from the plan object before passing to saveMealPlanToFirestore
+    const { userId: _, ...planWithoutUserId } = updatedPlan;
+    await saveMealPlanToFirestore(weekRange, planWithoutUserId);
+  };
+
+  /**
+   * Calendar Date Click Handler
+   *
+   * Opens the day meal modal for any clicked date.
+   */
+  const handleCalendarDateClick = async (date: Date) => {
+    setSelectedDate(date);
+    setDayMealTargetDate(date);
+    setIsDayMealModalOpen(true);
+  };
+
+  /**
+   * Day meal modal auto-save handler.
+   * Saves meals immediately using the existing Firestore contract.
+   */
+  const handleDayMealModalAutoSave = async (targetDate: Date, recipeIds: string[]) => {
+    try {
+      await saveMealsForDate(targetDate, recipeIds);
+      setSelectedDate(targetDate);
+    } catch (error) {
+      console.error('Error saving day meals:', error);
+    }
+  };
+
+  /**
+   * Day meal modal close handler.
+   * Ensures selectedDate is synced with the currently viewed day.
+   */
+  const handleDayMealModalClose = (targetDate: Date) => {
+    setSelectedDate(targetDate);
+    setIsDayMealModalOpen(false);
+    setDayMealTargetDate(null);
+  };
   
   /**
    * Meal Selection Handler
@@ -1494,7 +1560,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         <div 
           key={`day-${day}`} 
           className={`calendar-day ${isCurrentDay ? 'current-day' : ''} ${isSelected ? 'selected-day' : ''}`}
-          onClick={() => handleDateSelect(date)}
+          onClick={() => handleCalendarDateClick(date)}
         >
           {day}
           {hasMeals && <div className="meal-indicator" />}
@@ -1543,239 +1609,6 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
     );
   };
   
-  /**
-   * MealDetails Component
-   * 
-   * This component displays the details for a selected meal on a selected date.
-   * It includes a dropdown to select different recipes and shows the ingredients.
-   */
-  const MealDetails = () => {
-    const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
-    const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | ''>('');
-
-    // Load pre-selected meals when date changes
-    useEffect(() => {
-      if (selectedDate) {
-        const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-        const weekRange = getWeekRange(selectedDate);
-        const mealPlan = weeklyMealPlans[weekRange];
-        if (mealPlan && mealPlan[dayOfWeek]) {
-          setSelectedMeals(mealPlan[dayOfWeek].split(','));
-        } else {
-          setSelectedMeals([]);
-        }
-      }
-    }, [selectedDate, weeklyMealPlans]);
-
-    // Filter recipes by selected cuisine
-    const filteredRecipes = selectedCuisine
-      ? recipes.filter(recipe => recipe.cuisine === selectedCuisine)
-      : recipes;
-
-    // Remove duplicates and sort filtered recipes alphabetically
-    const sortedRecipes = deduplicateRecipes(filteredRecipes).sort((a, b) => a.name.localeCompare(b.name));
-
-    /**
-     * Auto-save meal plan to Firestore
-     * 
-     * This function is called automatically whenever meals are selected or unselected.
-     * It saves the current state of selected meals for the selected date.
-     */
-    const autoSaveMealPlan = async (mealsToSave: string[]) => {
-      if (!selectedDate) return;
-
-      try {
-        const weekRange = getWeekRange(selectedDate);
-        const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-
-        // Get existing meal plan for this week
-        const currentUser = requireAuth();
-        const userId = currentUser.uid;
-        const docId = `${userId}_${weekRange}`;
-        const mealPlanRef = doc(db, collections.mealPlans, docId);
-        const mealPlanDoc = await getDoc(mealPlanRef);
-        const existingPlan = mealPlanDoc.exists() ? mealPlanDoc.data() as WeeklyMealPlan : null;
-
-        const updatedPlan = {
-          ...(existingPlan || {}),
-          [dayOfWeek]: mealsToSave.join(',')
-        };
-
-        // Remove userId from the plan object before passing to saveMealPlanToFirestore
-        const { userId: _, ...planWithoutUserId } = updatedPlan;
-        await saveMealPlanToFirestore(weekRange, planWithoutUserId);
-      } catch (error) {
-        console.error('Error auto-saving meal plan:', error);
-      }
-    };
-
-    /**
-     * Handle meal selection from dropdown
-     * 
-     * When a user selects a meal from the dropdown, it's automatically added
-     * to the selected meals list and saved to Firestore immediately.
-     */
-    const handleMealChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const newMeal = event.target.value;
-      let updatedMeals: string[] = [];
-      
-      if (newMeal === 'none') {
-        updatedMeals = [];
-      } else if (newMeal && !selectedMeals.includes(newMeal)) {
-        updatedMeals = [...selectedMeals, newMeal];
-      } else {
-        // If meal is already selected or invalid, don't update
-        return;
-      }
-      
-      // Update state immediately for responsive UI
-      setSelectedMeals(updatedMeals);
-      
-      // Auto-save to Firestore
-      await autoSaveMealPlan(updatedMeals);
-    };
-
-    /**
-     * Handle meal removal from Selected Meals container
-     * 
-     * When a user removes a meal from the Selected Meals container,
-     * it's automatically removed and saved to Firestore immediately.
-     */
-    const handleRemoveMeal = async (mealId: string) => {
-      const updatedMeals = selectedMeals.filter(id => id !== mealId);
-      
-      // Update state immediately for responsive UI
-      setSelectedMeals(updatedMeals);
-      
-      // Auto-save to Firestore
-      await autoSaveMealPlan(updatedMeals);
-    };
-
-    return (
-      <div className="meal-details">
-        <h2>{formatDate(selectedDate)}</h2>
-        
-        <div className="scrollable-content">
-          <div className="meal-details-content">
-            <div className="meal-selector">
-              <div className="meal-selector-header">
-                <h3>Add Meals for This Day</h3>
-                <p className="meal-selector-subtitle">Select recipes to plan for {formatDate(selectedDate)}</p>
-              </div>
-              
-              <div className="meal-selector-controls">
-              <div className="cuisine-filter">
-                <label htmlFor="cuisine-filter">Filter by Cuisine:</label>
-                <select
-                  id="cuisine-filter"
-                  value={selectedCuisine}
-                  onChange={(e) => setSelectedCuisine(e.target.value as Cuisine | '')}
-                  className="cuisine-dropdown"
-                >
-                  <option value="">All Cuisines</option>
-                  {CUISINES.map((cuisine) => (
-                    <option key={cuisine} value={cuisine}>
-                      {cuisine}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="recipe-selector">
-                <label htmlFor="meal-dropdown">Add Recipe:</label>
-                <select 
-                  id="meal-dropdown" 
-                  value="" 
-                  onChange={handleMealChange}
-                  className="meal-dropdown"
-                >
-                    <option value="none">Choose a recipe...</option>
-                    {sortedRecipes.length > 0 ? (
-                      sortedRecipes.map((recipe) => (
-                    <option key={recipe.id} value={recipe.id}>
-                          {recipe.name} {recipe.tags && recipe.tags.length > 0 && `(${recipe.tags.slice(0, 2).join(', ')})`}
-                    </option>
-                      ))
-                    ) : (
-                      <option value="" disabled>No recipes available</option>
-                    )}
-                </select>
-                  {sortedRecipes.length === 0 && (
-                    <small className="form-help-text">
-                      {selectedCuisine ? `No ${selectedCuisine} recipes found. Try selecting "All Cuisines".` : 'No recipes in your library. Add some recipes first!'}
-                    </small>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="selected-meals-section">
-              <div className="selected-meals-header">
-                <h3>Selected Meals</h3>
-              </div>
-              <div className="selected-meals-content expanded">
-                {selectedMeals.length > 0 ? (
-                  selectedMeals.map(mealId => {
-                    const recipe = recipes.find(r => r.id === mealId);
-                    return (
-                      <div key={mealId} className="selected-meal">
-                        <span>{recipe?.name}</span>
-                        <button 
-                          className="remove-meal-button"
-                          onClick={() => handleRemoveMeal(mealId)}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p>No meals selected</p>
-                )}
-              </div>
-            </div>
-
-            {/* Ingredients section hidden for now - can be restored later if needed */}
-            {/* 
-            <div className="ingredients-section">
-              <div 
-                className="ingredients-header"
-                onClick={() => setIsIngredientsExpanded(!isIngredientsExpanded)}
-              >
-                <h3>Ingredients</h3>
-                <button className="toggle-ingredients-button">
-                  {isIngredientsExpanded ? '−' : '+'}
-                </button>
-              </div>
-              <div className={`ingredients-content ${isIngredientsExpanded ? 'expanded' : ''}`}>
-                {selectedMeals.length > 0 ? (
-                  <ul>
-                    {selectedMeals.map(mealId => {
-                      const recipe = recipes.find(r => r.id === mealId);
-                      return (
-                        <li key={mealId} className="recipe-ingredients">
-                          <h4>{recipe?.name}</h4>
-                          <ul>
-                            {recipe?.ingredients.map((ingredient, index) => (
-                              <li key={index}>{ingredient}</li>
-                            ))}
-                          </ul>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <p>Select recipes to view ingredients</p>
-                )}
-              </div>
-            </div>
-            */}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   //===========================================================================
   // RECIPE LIBRARY TAB COMPONENTS
   //===========================================================================
@@ -4052,21 +3885,9 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         
         {/* MEAL PLANNER TAB */}
         {activeTab === 'mealPlanner' && (
-          /* 
-            Meal Planner Layout
-            
-            We're using a flex container to create a two-column layout:
-            - Calendar on the left (2/3 width)
-            - Meal details on the right (1/3 width)
-            
-            This is a common pattern in React for creating responsive layouts.
-          */
           <div className="meal-planner-container">
             <div className="calendar-section">
               <Calendar />
-            </div>
-            <div className="meal-details-section">
-              <MealDetails />
             </div>
           </div>
         )}
@@ -4099,6 +3920,16 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         isOpen={isManageAccountOpen} 
         onClose={() => setIsManageAccountOpen(false)}
         user={user}
+      />
+      
+      <DayMealModal
+        isOpen={isDayMealModalOpen}
+        date={dayMealTargetDate}
+        recipes={recipes}
+        weeklyMealPlans={weeklyMealPlans}
+        cuisines={CUISINES}
+        onAutoSaveMeals={handleDayMealModalAutoSave}
+        onClose={handleDayMealModalClose}
       />
 
       <footer className="app-footer">
