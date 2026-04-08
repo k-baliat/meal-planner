@@ -45,6 +45,7 @@ import ManageAccount from './components/ManageAccount';
 // Import the ShareRecipeModal component
 import ShareRecipeModal from './components/ShareRecipeModal';
 import DayMealModal from './components/MealRecommendationModal';
+import SearchableDropdown from './components/SearchableDropdown';
 
 // Import the auto-logout hook
 import { useAutoLogout } from './hooks/useAutoLogout';
@@ -2572,34 +2573,33 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
               <div className="recipe-filters">
                 <div className="cuisine-filter">
                   <label htmlFor="my-recipes-cuisine-filter">Filter by Cuisine:</label>
-                  <select
+                  <SearchableDropdown
                     id="my-recipes-cuisine-filter"
                     value={selectedCuisine}
-                    onChange={(e) => {
-                      setSelectedCuisine(e.target.value as Cuisine | '');
+                    options={CUISINES.map((cuisine) => ({ value: cuisine, label: cuisine }))}
+                    onChange={(value) => {
+                      setSelectedCuisine(value as Cuisine | '');
                       // Clear selected recipe when filter changes
                       setSelectedMyRecipe(null);
                     }}
-                    className="cuisine-dropdown"
-                  >
-                    <option value="">All Cuisines</option>
-                    {CUISINES.map((cuisine) => (
-                      <option key={cuisine} value={cuisine}>
-                        {cuisine}
-                      </option>
-                    ))}
-                  </select>
+                    className="cuisine-dropdown searchable-dropdown-input"
+                    emptyOptionLabel="All Cuisines"
+                    placeholder="Type cuisine or choose from list..."
+                  />
                 </div>
               </div>
               
               {/* Recipe Selection Dropdown */}
               <div className="recipe-selection">
                 <label htmlFor="my-recipes-dropdown">Select Recipe:</label>
-                <select 
+                <SearchableDropdown
                   id="my-recipes-dropdown" 
                   value={selectedMyRecipe?.id || ''} 
-                  onChange={(e) => {
-                    const recipeId = e.target.value;
+                  options={sortedUserRecipes.map((recipe) => ({
+                    value: recipe.id || '',
+                    label: recipe.name
+                  }))}
+                  onChange={(recipeId) => {
                     if (recipeId) {
                       const recipe = sortedUserRecipes.find(r => r.id === recipeId);
                       setSelectedMyRecipe(recipe || null);
@@ -2607,15 +2607,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                       setSelectedMyRecipe(null);
                     }
                   }}
-                  className="recipe-dropdown"
-                >
-                  <option value="">Choose a recipe...</option>
-                  {sortedUserRecipes.map((recipe) => (
-                    <option key={recipe.id} value={recipe.id}>
-                      {recipe.name}
-                    </option>
-                  ))}
-                </select>
+                  className="recipe-dropdown searchable-dropdown-input"
+                  emptyOptionLabel="Choose a recipe..."
+                  placeholder="Type recipe name or choose from list..."
+                />
               </div>
               
               {/* Recipe Details View - Shows when a recipe is selected */}
@@ -3033,6 +3028,11 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
           if (selectedSharedBy) {
             sharedRecipes = sharedRecipes.filter(recipe => recipe.userId === selectedSharedBy);
           }
+
+          // Apply filters: Cuisine filter
+          if (selectedSharedCuisine) {
+            sharedRecipes = sharedRecipes.filter(recipe => recipe.cuisine === selectedSharedCuisine);
+          }
           
           // Apply filters: Tags filter
           if (selectedSharedTag) {
@@ -3045,19 +3045,52 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
           const sortedSharedRecipes = deduplicateRecipes(sharedRecipes).sort((a, b) => 
             a.name.localeCompare(b.name)
           );
+
+          // Cuisine options for shared recipes filter
+          const uniqueSharedCuisines = Array.from(
+            new Set(
+              recipes
+                .filter(recipe =>
+                  recipe.sharedWith &&
+                  recipe.sharedWith.includes(userId) &&
+                  recipe.userId !== userId
+                )
+                .map(recipe => recipe.cuisine)
+            )
+          ).sort();
           
           return (
             <div className="shared-recipes-tab-content">
               {/* Filters Container - Responsive inline filters */}
               <div className="shared-recipes-filters">
+                {/* Cuisine Filter */}
+                <div className="filter-group">
+                  <label htmlFor="shared-cuisine-filter">Filter by Cuisine:</label>
+                  <SearchableDropdown
+                    id="shared-cuisine-filter"
+                    value={selectedSharedCuisine}
+                    options={uniqueSharedCuisines.map((cuisine) => ({ value: cuisine, label: cuisine }))}
+                    onChange={(value) => {
+                      setSelectedSharedCuisine(value as Cuisine | '');
+                      setSelectedSharedRecipe(null); // Clear selection when filter changes
+                    }}
+                    className="cuisine-dropdown searchable-dropdown-input"
+                    emptyOptionLabel="All Cuisines"
+                    placeholder="Type cuisine or choose from list..."
+                  />
+                </div>
+
                 {/* Recipe Selection Dropdown */}
                 <div className="filter-group">
                   <label htmlFor="shared-recipes-dropdown">Select Recipe:</label>
-                  <select 
+                  <SearchableDropdown
                     id="shared-recipes-dropdown" 
                     value={selectedSharedRecipe?.id || ''} 
-                    onChange={(e) => {
-                      const recipeId = e.target.value;
+                    options={sortedSharedRecipes.map((recipe) => ({
+                      value: recipe.id || '',
+                      label: recipe.name
+                    }))}
+                    onChange={(recipeId) => {
                       if (recipeId) {
                         const recipe = sortedSharedRecipes.find(r => r.id === recipeId);
                         setSelectedSharedRecipe(recipe || null);
@@ -3065,15 +3098,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                         setSelectedSharedRecipe(null);
                       }
                     }}
-                    className="recipe-dropdown"
-                  >
-                    <option value="">Choose a recipe...</option>
-                    {sortedSharedRecipes.map((recipe) => (
-                      <option key={recipe.id} value={recipe.id}>
-                        {recipe.name}
-                      </option>
-                    ))}
-                  </select>
+                    className="recipe-dropdown searchable-dropdown-input"
+                    emptyOptionLabel="Choose a recipe..."
+                    placeholder="Type recipe name or choose from list..."
+                  />
                 </div>
                 
                 {/* Shared By Filter */}

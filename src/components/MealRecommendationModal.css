@@ -197,6 +197,13 @@
   color: #6b6b6b;
 }
 
+.meal-selector-empty-text {
+  display: block;
+  margin-top: 0.5rem;
+  color: #6b6b6b;
+  font-size: 0.8rem;
+}
+
 .meal-recommendation-actions {
   display: flex;
   justify-content: center;

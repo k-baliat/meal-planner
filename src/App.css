@@ -493,6 +493,7 @@ body {
 .recipe-dropdown,
 .week-dropdown,
 .cuisine-dropdown,
+.searchable-dropdown-input,
 .recipe-input,
 .misc-item-text-input,
 .recipe-notes-textarea,
@@ -513,6 +514,7 @@ body {
 .recipe-dropdown:focus,
 .week-dropdown:focus,
 .cuisine-dropdown:focus,
+.searchable-dropdown-input:focus,
 .recipe-input:focus,
 .misc-item-text-input:focus,
 .recipe-notes-textarea:focus,
@@ -525,9 +527,78 @@ body {
 .meal-dropdown,
 .recipe-dropdown,
 .week-dropdown,
-.cuisine-dropdown {
+.cuisine-dropdown,
+.searchable-dropdown-input {
   margin-top: 0.5rem;
   cursor: pointer;
+}
+
+.searchable-dropdown-combobox {
+  position: relative;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.searchable-dropdown-combobox .searchable-dropdown-input {
+  padding-right: 2.2rem;
+}
+
+.searchable-dropdown-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0.15rem;
+}
+
+.searchable-dropdown-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.searchable-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+  z-index: 1100;
+  margin: 0;
+  padding: 0.3rem 0;
+  list-style: none;
+}
+
+.searchable-dropdown-option {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 0.55rem 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.searchable-dropdown-option:hover,
+.searchable-dropdown-option.highlighted {
+  background: #f3f7f3;
+}
+
+.searchable-dropdown-empty {
+  padding: 0.55rem 0.85rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .ingredients-list ul {
@@ -2475,6 +2546,7 @@ body {
 .recipe-dropdown,
 .week-dropdown,
 .cuisine-dropdown,
+.searchable-dropdown-input,
 .recipe-input,
 .misc-item-text-input,
 .recipe-notes-textarea,
@@ -2491,6 +2563,7 @@ body {
 .recipe-dropdown:focus,
 .week-dropdown:focus,
 .cuisine-dropdown:focus,
+.searchable-dropdown-input:focus,
 .recipe-input:focus,
 .misc-item-text-input:focus,
 .recipe-notes-textarea:focus,

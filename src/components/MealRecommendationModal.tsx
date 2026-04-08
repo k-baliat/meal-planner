@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './MealRecommendationModal.css';
+import SearchableDropdown, { SearchableOption } from './SearchableDropdown';
 
 interface DayMealRecipe {
   id?: string;
@@ -107,6 +108,7 @@ const DayMealModal: React.FC<DayMealModalProps> = ({
   const [displayedRecipes, setDisplayedRecipes] = useState<DayMealRecipe[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
   const [selectedCuisine, setSelectedCuisine] = useState<string>('');
+  const [manualRecipeSelection, setManualRecipeSelection] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -114,6 +116,7 @@ const DayMealModal: React.FC<DayMealModalProps> = ({
       setDisplayedRecipes([]);
       setSelectedMeals([]);
       setSelectedCuisine('');
+      setManualRecipeSelection('');
       return;
     }
 
@@ -129,6 +132,7 @@ const DayMealModal: React.FC<DayMealModalProps> = ({
     setDisplayedRecipes(initialRecommendations);
     setSelectedMeals(initialSelectedMeals);
     setSelectedCuisine('');
+    setManualRecipeSelection('');
   }, [isOpen, date, recipes, weeklyMealPlans]);
 
   const dayName = useMemo(() => {
@@ -179,6 +183,20 @@ const DayMealModal: React.FC<DayMealModalProps> = ({
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [filteredRecipes, selectedMeals]);
 
+  const cuisineOptions = useMemo<SearchableOption[]>(
+    () => cuisines.map((cuisine) => ({ value: cuisine, label: cuisine })),
+    [cuisines]
+  );
+
+  const manualRecipeOptions = useMemo<SearchableOption[]>(
+    () =>
+      sortedManualRecipes.map((recipe) => ({
+        value: recipe.id || '',
+        label: recipe.name
+      })),
+    [sortedManualRecipes]
+  );
+
   const persistMeals = async (nextMeals: string[]) => {
     if (!date) return;
     setSelectedMeals(nextMeals);
@@ -201,11 +219,10 @@ const DayMealModal: React.FC<DayMealModalProps> = ({
     await persistMeals(nextMeals);
   };
 
-  const handleManualAdd = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const recipeId = event.target.value;
-    if (!recipeId || recipeId === 'none') return;
+  const handleManualAdd = async (recipeId: string) => {
+    if (!recipeId) return;
     await handleAddMeal(recipeId);
-    event.target.value = 'none';
+    setManualRecipeSelection('');
   };
 
   const handleClose = () => {
@@ -321,44 +338,40 @@ const DayMealModal: React.FC<DayMealModalProps> = ({
             <div className="meal-selector-controls">
               <div className="cuisine-filter">
                 <label htmlFor="day-modal-cuisine-filter">Filter by Cuisine:</label>
-                <select
+                <SearchableDropdown
                   id="day-modal-cuisine-filter"
                   value={selectedCuisine}
-                  onChange={(event) => setSelectedCuisine(event.target.value)}
-                  className="cuisine-dropdown"
+                  options={cuisineOptions}
+                  onChange={setSelectedCuisine}
+                  emptyOptionLabel="All Cuisines"
+                  placeholder="Type cuisine or choose from list..."
+                  className="cuisine-dropdown searchable-dropdown-input"
                   disabled={isSaving}
-                >
-                  <option value="">All Cuisines</option>
-                  {cuisines.map((cuisine) => (
-                    <option key={cuisine} value={cuisine}>
-                      {cuisine}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
 
               <div className="recipe-selector">
                 <label htmlFor="day-modal-meal-dropdown">Add Recipe:</label>
-                <select
+                <SearchableDropdown
                   id="day-modal-meal-dropdown"
-                  defaultValue="none"
-                  onChange={handleManualAdd}
-                  className="meal-dropdown"
+                  value={manualRecipeSelection}
+                  options={manualRecipeOptions}
+                  onChange={(recipeId) => {
+                    setManualRecipeSelection(recipeId);
+                    if (recipeId) {
+                      void handleManualAdd(recipeId);
+                    }
+                  }}
+                  placeholder="Type recipe name or choose from list..."
+                  emptyOptionLabel="Choose a recipe..."
+                  className="meal-dropdown searchable-dropdown-input"
                   disabled={isSaving}
-                >
-                  <option value="none">Choose a recipe...</option>
-                  {sortedManualRecipes.length > 0 ? (
-                    sortedManualRecipes.map((recipe) => (
-                      <option key={recipe.id} value={recipe.id}>
-                        {recipe.name}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="" disabled>
-                      {selectedCuisine ? `No ${selectedCuisine} recipes available` : 'No recipes available'}
-                    </option>
-                  )}
-                </select>
+                />
+                {sortedManualRecipes.length === 0 && (
+                  <small className="meal-selector-empty-text">
+                    {selectedCuisine ? `No ${selectedCuisine} recipes available` : 'No recipes available'}
+                  </small>
+                )}
               </div>
             </div>
           </div>
