@@ -119,6 +119,11 @@ interface CategorizedIngredients {
   [category: string]: CategorizedIngredient[];
 }
 
+interface AggregatedIngredientsResult {
+  ingredients: string[];
+  ingredientRecipes: Record<string, string[]>;
+}
+
 interface Note {
   id?: string;
   date: string;
@@ -1384,16 +1389,13 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
     });
   };
 
-  /**
-   * Get Aggregated Ingredients Function
-   * 
-   * This function aggregates all ingredients needed for the selected week's meals.
-   * It includes the recipe name in parentheses for each ingredient.
-   * 
-   * @returns An array of formatted ingredient strings
-   */
-  const getAggregatedIngredients = async (): Promise<string[]> => {
-    if (!selectedWeek) return [];
+  const getAggregatedIngredients = async (): Promise<AggregatedIngredientsResult> => {
+    if (!selectedWeek) {
+      return {
+        ingredients: [],
+        ingredientRecipes: {}
+      };
+    }
 
     try {
       // Get meal plan for the selected week (user-specific)
@@ -1404,10 +1406,17 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       const mealPlanDoc = await getDoc(mealPlanRef);
       const weekPlan = mealPlanDoc.exists() ? mealPlanDoc.data() as WeeklyMealPlan : null;
 
-      if (!weekPlan) return [];
+      if (!weekPlan) {
+        return {
+          ingredients: [],
+          ingredientRecipes: {}
+        };
+      }
 
       // Create a map to store ingredient counts
       const ingredientCounts = new Map<string, number>();
+      // Keep track of which recipes use each ingredient
+      const ingredientRecipeNames = new Map<string, Set<string>>();
 
       // Define valid day names to filter out metadata fields like userId, weekRange, createdAt, updatedAt
       const validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -1434,18 +1443,37 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
             if (normalizedIngredient) {
               const currentCount = ingredientCounts.get(normalizedIngredient) || 0;
               ingredientCounts.set(normalizedIngredient, currentCount + 1);
+
+              if (!ingredientRecipeNames.has(normalizedIngredient)) {
+                ingredientRecipeNames.set(normalizedIngredient, new Set());
+              }
+              ingredientRecipeNames.get(normalizedIngredient)?.add(recipe.name);
             }
           });
         });
       });
 
-      // Convert the map to an array of formatted strings
-      return Array.from(ingredientCounts.entries())
-        .map(([ingredient, count]) => `${ingredient} (x${count})`)
-        .sort((a, b) => a.localeCompare(b));
+      const sortedIngredients = Array.from(ingredientCounts.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]));
+
+      const ingredientRecipes: Record<string, string[]> = {};
+      const formattedIngredients = sortedIngredients.map(([ingredient, count]) => {
+        const ingredientKey = `${ingredient} (x${count})`;
+        ingredientRecipes[ingredientKey] = Array.from(ingredientRecipeNames.get(ingredient) || [])
+          .sort((a, b) => a.localeCompare(b));
+        return ingredientKey;
+      });
+
+      return {
+        ingredients: formattedIngredients,
+        ingredientRecipes
+      };
     } catch (error) {
       console.error('Error getting aggregated ingredients:', error);
-      return [];
+      return {
+        ingredients: [],
+        ingredientRecipes: {}
+      };
     }
   };
   
@@ -3186,6 +3214,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
    */
   const ShoppingList = () => {
     const [ingredients, setIngredients] = useState<string[]>([]);
+    const [ingredientRecipeMap, setIngredientRecipeMap] = useState<Record<string, string[]>>({});
     const [loading, setLoading] = useState(false);
     const [categorizing, setCategorizing] = useState(false);
     const [miscItem, setMiscItem] = useState('');
@@ -3239,6 +3268,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
       const loadItems = async () => {
         if (!selectedWeek) {
           setIngredients([]);
+          setIngredientRecipeMap({});
           setMiscItems([]);
           setCheckedItems(new Set());
           setCategorizedIngredients({});
@@ -3251,9 +3281,11 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
 
         setLoading(true);
         try {
-          const aggregatedIngredients = await getAggregatedIngredients();
+          const aggregatedResult = await getAggregatedIngredients();
+          const aggregatedIngredients = aggregatedResult.ingredients;
           if (!isActive) return;
           setIngredients(aggregatedIngredients);
+          setIngredientRecipeMap(aggregatedResult.ingredientRecipes);
           
           const currentHash = calculateIngredientsHash(aggregatedIngredients);
           currentIngredientsHashRef.current = currentHash;
@@ -3411,6 +3443,7 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         } catch (error) {
           console.error('Error loading items:', error);
           setIngredients([]);
+          setIngredientRecipeMap({});
           setMiscItems([]);
           setCheckedItems(new Set());
           setCategorizedIngredients({});
@@ -3448,6 +3481,29 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
         classNames.push('remote-updated');
       }
       return classNames.join(' ');
+    };
+
+    const renderIngredientRecipes = (ingredientName: string) => {
+      const recipesForIngredient = ingredientRecipeMap[ingredientName] || [];
+      if (recipesForIngredient.length === 0) return null;
+
+      const visibleRecipes = recipesForIngredient.slice(0, 2);
+      const remainingRecipesCount = recipesForIngredient.length - visibleRecipes.length;
+
+      return (
+        <span className="ingredient-recipe-chips" aria-label={`Used in ${recipesForIngredient.join(', ')}`}>
+          {visibleRecipes.map((recipeName) => (
+            <span key={`${ingredientName}-${recipeName}`} className="ingredient-recipe-chip">
+              {recipeName}
+            </span>
+          ))}
+          {remainingRecipesCount > 0 && (
+            <span className="ingredient-recipe-chip ingredient-recipe-chip-more">
+              +{remainingRecipesCount} more
+            </span>
+          )}
+        </span>
+      );
     };
 
     // Handler for toggling checked state of an item
@@ -3670,7 +3726,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                                         onChange={() => handleToggleCheckedItem(item.name)}
                                         className="shopping-checkbox"
                                       />
-                                      <span className="shopping-item-text">{item.name}</span>
+                                      <span className="shopping-item-content">
+                                        <span className="shopping-item-text">{item.name}</span>
+                                        {renderIngredientRecipes(item.name)}
+                                      </span>
                                     </label>
                                   </li>
                                 ))}
@@ -3689,7 +3748,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
                                     onChange={() => handleToggleCheckedItem(ingredient)}
                                     className="shopping-checkbox"
                                   />
-                                  <span className="shopping-item-text">{ingredient}</span>
+                                  <span className="shopping-item-content">
+                                    <span className="shopping-item-text">{ingredient}</span>
+                                    {renderIngredientRecipes(ingredient)}
+                                  </span>
                                 </label>
                               </li>
                             ))}

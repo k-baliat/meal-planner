@@ -1000,6 +1000,38 @@ body {
   flex: 1;
 }
 
+.shopping-item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.ingredient-recipe-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.ingredient-recipe-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(63, 94, 251, 0.08);
+  border: 1px solid rgba(63, 94, 251, 0.2);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.ingredient-recipe-chip-more {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
 .checked {
   text-decoration: line-through;
   opacity: 0.6;
