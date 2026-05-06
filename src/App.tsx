@@ -3380,9 +3380,10 @@ Input: ${JSON.stringify({ ingredients: ingredientsForAI })}`;
 
             if (!snapshot.exists()) return;
 
-            // Guard: if ingredients hash changed, meal-plan sync should drive full reload.
-            // We skip checked/misc sync here to avoid double-processing and recategorization loops.
-            if (data.ingredientsHash !== currentIngredientsHashRef.current) return;
+            // Always sync checked + misc from Firestore when the document exists.
+            // They are independent of ingredientsHash. Partial writes (e.g. misc-only or checked-only
+            // setDoc with merge) often omit ingredientsHash; treating a missing/stale hash as a skip
+            // left miscItems stuck at [] after refresh.
 
             const savedScroll = scrollPositionRef.current;
             const incomingCheckedItems = new Set<string>(Array.isArray(data.checkedItems) ? data.checkedItems : []);
